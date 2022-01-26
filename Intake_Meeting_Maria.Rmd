@@ -17,9 +17,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Project Description
 
-### Overall Goal:
+### Overall Goal
 
-- Understand roles of animals in ancient economy at Teotihuacan Mexico.
+- Understand roles of 4 kinds of animals in ancient economy at Teotihuacan Mexico
 <!-- were animals hunted from natural environments, anthropogenic environments, or raised for consumption in the city? -->
 
 <br/>
@@ -37,7 +37,6 @@ knitr::opts_chunk$set(echo = FALSE)
 
 - "Taxa", "Site" and "Carbon and Nitrogen Level"
 
-<br/>
 
 ### Explaination
 
@@ -52,22 +51,22 @@ knitr::include_graphics("pictures.png")
 
 ## Carbon and Nitrogen Level
 
-- stable carbon and nitrogen isotopes 
+- Stable collagen, apatite and nitrogen isotopes level 
 
-- These isotopes enter bones by eating and reflect the isotopic values of food sources. 
+- These isotopes enter bones by eating and reflect the values of animals' diets
 
-<br/>
 
--	Carbon isotopes -- level of human-grown plants in the diet
+### Explaination
+
+-	Carbon isotopes reflect level of human-grown plants in animals' diet
 <!-- , such as maize (corn).  -->
  <!-- High values = more corn.  -->
+ 
+    + Carbon isotopes from collagen are protein derived.
+    + Carbon isotopes from apatite (carbonate) reflect whole diet. 
+  
 
-- Carbon isotopes from collagen are protein derived.
-- Carbon isotopes from apatite (carbonate) reflect whole diet. 
-
-<br/>
-
--	Nitrogen isotopes tell us about the protein in the diet. 
+-	Nitrogen isotopes tell us about the protein value in animals' diet. 
 <!-- Higher values = more protein.  -->
 
 
@@ -79,5 +78,9 @@ knitr::include_graphics("summary.png")
 
 ## Goal and Plan
 
+- Make some EDA to compare the three isotopes levels in animals' diet
 
+- Do t-test for the means and medians of isotopes levels.
+
+- Fit a mixed effect model to analyse animals’ isotopes levels.
 
