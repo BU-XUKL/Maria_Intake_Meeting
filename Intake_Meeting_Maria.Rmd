@@ -15,6 +15,10 @@ knitr::opts_chunk$set(echo = FALSE)
 
 - Department: Department of Anthropology
 
+```{r school, echo=FALSE, out.width = '90%'}
+knitr::include_graphics("school.png")
+```
+
 ## Project Description
 
 ### Overall Goal
