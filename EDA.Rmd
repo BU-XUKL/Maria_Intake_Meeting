@@ -1,6 +1,6 @@
 ---
-title: "Untitled"
-author: "Keliang Xu"
+title: "Week 1"
+author: "Group 2"
 date: "2/3/2022"
 output: html_document
 ---
@@ -13,8 +13,8 @@ library(reshape2)
 library(dplyr)
 ```
 
-
-```{r}
+## Data Cleaning
+```{r, include=FALSE}
 #read data
 data<-read.xlsx("for_stats_peeps.xlsx")
 data<-data[,-2:-6]
@@ -22,7 +22,7 @@ data<-data[,-4]
 data <- na.omit(data)
 ```
 
-```{r}
+```{r, include=FALSE}
 #tidy data
 data2<-data[,2:8]
 data2<-data2[,-3]
@@ -30,34 +30,28 @@ data2<-data2[,-5]
 aggdata<-melt(data2,id=(c("Taxa","Site")))
 
 ```
+Dropped 3 missing value, their IDs are MC376, MC389, MC76.
 
-
-```{r}
-#EDA
-
-
-
+## EDA
+```{r,echo=FALSE,include=FALSE}
 ggplot(data = aggdata, aes(x=variable,y=value, fill=variable)) + 
   geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))+
   facet_wrap(~Taxa,nrow = 1)
-
-
 ```
 
-
-```{r}
-
-
+In this plot, we compared specific isotopes level in 4 taxon. It showed the level of d15N_air is less diverse than other 2 isotopes.
+```{r, echo=FALSE}
 ggplot(data = aggdata, aes(x=Taxa,y=value, fill=Taxa)) + 
   geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))+
   facet_wrap(~variable,nrow = 1)
-
 ```
 
+Then we compared isotopes in two sites for each kind of animals. The plot shows that the median level of d13C_VPDB and d15N_air in BAOX is higher than Tlajinga of cottontail. Similarly, the median level of d13C_VPDB and d15N_air of hare also show difference in the boxplot.
 
-```{r}
+
+```{r, echo=FALSE}
 data_deer<-aggdata[which(aggdata$Taxa=="Deer"),]
 data_Cottontail<-aggdata[which(aggdata$Taxa=="Cottontail"),]
 data_Hare<-aggdata[which(aggdata$Taxa=="Hare"),]
@@ -116,13 +110,18 @@ turkey2<-ggplot(data = data_Turkey, aes(x=Site,y=value, fill=Site)) +
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 
-gridExtra::grid.arrange(deer1,cot1,nrow=2,ncol=1)
-gridExtra::grid.arrange(hare1,turkey1,nrow=2,ncol=1)
+#gridExtra::grid.arrange(deer1,cot1,nrow=2,ncol=1)
+#gridExtra::grid.arrange(hare1,turkey1,nrow=2,ncol=1)
 
 gridExtra::grid.arrange(deer2,cot2,nrow=2,ncol=1)
 gridExtra::grid.arrange(hare2,turkey2,nrow=2,ncol=1)
 
 ```
 
+
+
+## Next Step
+
+We plan to try some statistic test or some regression to compare the isotopes level in two sites more precisely.
