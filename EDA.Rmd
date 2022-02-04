@@ -1,0 +1,36 @@
+---
+title: "Untitled"
+author: "Keliang Xu"
+date: "2/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(openxlsx)
+library(reshape2)
+```
+
+
+```{r}
+#read data
+data<-read.xlsx("for_stats_peeps.xlsx")
+data<-data[,-2:-6]
+data<-data[,-4]
+```
+
+```{r}
+#tidy data
+data2<-data[,2:8]
+data2<-data2[,-3]
+aggdata<-melt(data2,id=(c("Taxa","Site","C/N")))
+
+
+```
+
+
+```{r}
+#EDA
+ggplot(data=data,aes)
+```
