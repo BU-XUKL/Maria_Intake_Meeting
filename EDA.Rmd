@@ -11,6 +11,9 @@ library(ggplot2)
 library(openxlsx)
 library(reshape2)
 library(dplyr)
+library(tidyr)
+library("formattable")
+
 ```
 
 ## Data Cleaning
@@ -19,7 +22,11 @@ library(dplyr)
 data<-read.xlsx("for_stats_peeps.xlsx")
 data<-data[,-2:-6]
 data<-data[,-4]
-data <- na.omit(data)
+removedata<-c("MC381","MC389","MC393","MC76")
+#data <- na.omit(data)
+i<-1
+for(i in i:4) data<-subset(data,data$ID!=removedata[i])
+
 ```
 
 ```{r, include=FALSE}
@@ -30,7 +37,23 @@ data2<-data2[,-5]
 aggdata<-melt(data2,id=(c("Taxa","Site")))
 
 ```
-Dropped 3 missing value, their IDs are MC376, MC389, MC76.
+Dropped 3 missing value, their IDs are MC381,MC389,MC393,MC76.
+
+```{r}
+summ <- aggdata %>%                              
+  group_by(Taxa,Site,variable) %>% 
+  na.omit(aggdata) %>%
+  summarize(min = min(value),
+            median = median(value),
+            mean = mean(value),
+            max = max(value),
+            sd = sd(value),
+            count=n())
+formattable(summ)
+
+
+
+```
 
 ## EDA
 ```{r,echo=FALSE,include=FALSE}
