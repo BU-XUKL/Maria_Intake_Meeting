@@ -319,6 +319,10 @@ min(U1,U2)
 # Alpha=0.01  test statistic(7) and our critical value(7) cannot reject
 
 # Alpha=0.01 Since our test statistic (13) is greater than our critical value (7), we fail to reject the null hypothesis.
+
+
+## Theory : https://www.statology.org/mann-whitney-u-test/
+## Table : https://www.statology.org/mann-whitney-u-table/
 ```
 
 ## Next Step
