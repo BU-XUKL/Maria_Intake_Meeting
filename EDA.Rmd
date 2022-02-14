@@ -223,19 +223,6 @@ qqline(aggdata[aggdata$Taxa=="Turkey"&aggdata$variable=="d15N_air",]$value)
 ```
 
 ## Mann Whitney U Test
-```{r,echo=FALSE,include=FALSE}
-mann <- subset(aggdata,select = -Site) %>%                              
-  group_by(Taxa,variable) %>% 
-  na.omit(aggdata) %>%
-  summarize(rank = rank(value))
-formattable(mann)
-mann<- aggdata %>%                              
-  group_by(Taxa,variable) %>% 
-  na.omit(aggdata) %>%
-  cbind(rank=mann$rank)
-
-```
-
 
 
 
@@ -307,6 +294,32 @@ wilcox.test(value~Site,data=data_turkey_n)
 # two sites animals are the same
 ```
 
+## Check Mann-Whitney U Test with theory
+```{r}
+mann <- subset(aggdata,select = -Site) %>%                         
+  group_by(Taxa,variable) %>% 
+  na.omit(aggdata) %>%
+  summarize(rank = rank(value))
+mann<- aggdata %>%                              
+  group_by(Taxa,variable) %>% 
+  na.omit(aggdata) %>%
+  cbind(rank=mann$rank)
+#formattable(mann)
+
+mann_cott_n<-mann[which(mann$variable=="d15N_air" & mann$Taxa=="Cottontail"),]
+setA<-mann_cott_n[mann_cott_n$Site=="BAOX",]
+setB<-mann_cott_n[mann_cott_n$Site=="Tlajinga",]
+n1<-length(setA$Taxa)
+n2<-length(setA$Taxa)
+R1<-sum(setA$rank)
+R2<-sum(setB$rank)
+U1<-n1*n2+n1*(n1+1)/2-R1
+U2<-n1*n2+n2*(n2+1)/2-R2
+min(U1,U2)
+# Alpha=0.01  test statistic(7) and our critical value(7) cannot reject
+
+# Alpha=0.01 Since our test statistic (13) is greater than our critical value (7), we fail to reject the null hypothesis.
+```
 
 ## Next Step
 
