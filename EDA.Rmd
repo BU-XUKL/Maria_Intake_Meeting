@@ -298,6 +298,13 @@ wilcox.test(value~Site,data=data_turkey_n)
 
 #Since this p-value is not less than 0.05, we fail to reject the null hypothesis. 
 
+
+# Mann-Whitney U Test for Cottontail.
+
+# W=52, p-value= 0.03792
+
+# we can reject the null hypothesis:
+# two sites animals are the same
 ```
 
 
