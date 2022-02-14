@@ -40,7 +40,7 @@ aggdata<-melt(data2,id=(c("Taxa","Site")))
 ```
 Dropped 4 missing value, their IDs are MC381,MC389,MC393,MC76.
 
-```{r}
+```{r,include=FALSE}
 summ <- aggdata %>%                              
   group_by(Taxa,Site,variable) %>% 
   na.omit(aggdata) %>%
@@ -50,14 +50,12 @@ summ <- aggdata %>%
             max = max(value),
             sd = sd(value),
             count=n())
-formattable(summ)
-
-
+#formattable(summ)
 
 ```
 
 ## EDA
-```{r,echo=FALSE,include=FALSE}
+```{r,echo=FALSE,include=FALSE,warning=FALSE}
 ggplot(data = aggdata, aes(x=variable,y=value, fill=variable)) + 
   geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))+
@@ -65,7 +63,7 @@ ggplot(data = aggdata, aes(x=variable,y=value, fill=variable)) +
 ```
 
 In this plot, we compared specific isotopes level in 4 taxon. It showed the level of d15N_air is less diverse than other 2 isotopes.
-```{r, echo=FALSE}
+```{r, echo=FALSE,warning=FALSE}
 ggplot(data = aggdata, aes(x=Taxa,y=value, fill=Taxa)) + 
   geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))+
@@ -75,7 +73,7 @@ ggplot(data = aggdata, aes(x=Taxa,y=value, fill=Taxa)) +
 Then we compared isotopes in two sites for each kind of animals. The plot shows that the median level of d13C_VPDB and d15N_air in BAOX is higher than Tlajinga of cottontail. Similarly, the median level of d13C_VPDB and d15N_air of hare also show difference in the boxplot.
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,warning=FALSE}
 data_deer<-aggdata[which(aggdata$Taxa=="Deer"),]
 data_Cottontail<-aggdata[which(aggdata$Taxa=="Cottontail"),]
 data_Hare<-aggdata[which(aggdata$Taxa=="Hare"),]
@@ -134,7 +132,7 @@ turkey2<-ggplot(data = data_Turkey, aes(x=Site,y=value, fill=Site)) +
 
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,warning=FALSE}
 
 #gridExtra::grid.arrange(deer1,cot1,nrow=2,ncol=1)
 #gridExtra::grid.arrange(hare1,turkey1,nrow=2,ncol=1)
@@ -159,7 +157,7 @@ We would like to use the T-tests to find the difference of diets between two sit
 
 Firstly, we checked the normality.
 
-```{r,echo=FALSE}
+```{r,echo=FALSE,warning=FALSE}
 # check the d13C_VPDB
 aggdata1 <- filter(aggdata, variable== "d13C_VPDB" & Site == "BAOX")
 ggplot1 <- ggplot(aggdata1, aes(value, colour = Taxa,fill=Taxa)) + geom_density(alpha = 0.3) +
@@ -177,7 +175,7 @@ ggplot2 <- ggplot(aggdata2, aes(value, colour = Taxa,fill=Taxa)) + geom_density(
 gridExtra::grid.arrange(ggplot1, ggplot2)
 ```
 
-```{r}
+```{r,echo=FALSE,warning=FALSE}
 # check the d15N_air
 aggdata3 <- filter(aggdata, variable== "d15N_air" & Site == "BAOX")
 ggplot3 <- ggplot(aggdata3, aes(value, colour = Taxa,fill=Taxa)) + geom_density(alpha = 0.3) +
@@ -196,7 +194,7 @@ gridExtra::grid.arrange(ggplot3, ggplot4)
 ```
 
 
-```{r}
+```{r,echo=FALSE,warning=FALSE}
 # check the ap_13C_VPDB
 aggdata5 <- filter(aggdata, variable== "ap_13C_VPDB" & Site == "BAOX")
 ggplot5 <- ggplot(aggdata5, aes(value, colour = Taxa,fill=Taxa)) + geom_density(alpha = 0.3) +
@@ -224,11 +222,9 @@ qqline(aggdata[aggdata$Taxa=="Turkey"&aggdata$variable=="d15N_air",]$value)
 
 ## Mann Whitney U Test
 
-
-
 Mann-Whitney U Test for deer.
 
-```{r}
+```{r,echo=FALSE,warning=FALSE}
 data_deer_dc<-data_deer[which(data_deer$variable=="d13C_VPDB"),]
 wilcox.test(value~Site,data=data_deer_dc)
 
@@ -241,7 +237,7 @@ wilcox.test(value~Site,data=data_deer_n)
 
 Mann-Whitney U Test for Cottontail.
 
-```{r}
+```{r,echo=FALSE,warning=FALSE}
 data_cott_dc<-data_Cottontail[which(data_Cottontail$variable=="d13C_VPDB"),]
 wilcox.test(value~Site,data=data_cott_dc)
 
@@ -254,7 +250,7 @@ wilcox.test(value~Site,data=data_cott_n)
 
 Mann-Whitney U Test for Hare.
 
-```{r}
+```{r,echo=FALSE,warning=FALSE}
 data_hare_dc<-data_Hare[which(data_Hare$variable=="d13C_VPDB"),]
 wilcox.test(value~Site,data=data_hare_dc)
 
@@ -267,7 +263,7 @@ wilcox.test(value~Site,data=data_hare_n)
 
 Mann-Whitney U Test for Turkey.
 
-```{r}
+```{r,echo=FALSE,warning=FALSE}
 data_turkey_dc<-data_Turkey[which(data_Turkey$variable=="d13C_VPDB"),]
 wilcox.test(value~Site,data=data_turkey_dc)
 
@@ -295,7 +291,10 @@ wilcox.test(value~Site,data=data_turkey_n)
 ```
 
 ## Check Mann-Whitney U Test with theory
-```{r}
+
+Because we find that Cottontail of d15N_air test reject the null hypothesis due to p-value.
+We want to check Mann-Whitney U Test without R package again.
+```{r,echo=FALSE,warning=FALSE}
 mann <- subset(aggdata,select = -Site) %>%                         
   group_by(Taxa,variable) %>% 
   na.omit(aggdata) %>%
@@ -315,15 +314,18 @@ R1<-sum(setA$rank)
 R2<-sum(setB$rank)
 U1<-n1*n2+n1*(n1+1)/2-R1
 U2<-n1*n2+n2*(n2+1)/2-R2
-min(U1,U2)
-# Alpha=0.01  test statistic(7) and our critical value(7) cannot reject
+#min(U1,U2)
 
-# Alpha=0.01 Since our test statistic (13) is greater than our critical value (7), we fail to reject the null hypothesis.
-
-
-## Theory : https://www.statology.org/mann-whitney-u-test/
-## Table : https://www.statology.org/mann-whitney-u-table/
 ```
+
+ Alpha=0.01, test statistic(7) and our critical value(7) cannot reject
+
+ Alpha=0.05. Since our test statistic (13) is greater than our critical value (7), we fail to reject the null hypothesis.
+
+
+ Theory : https://www.statology.org/mann-whitney-u-test/
+ Table : https://www.statology.org/mann-whitney-u-table/
+
 
 ## Next Step
 
