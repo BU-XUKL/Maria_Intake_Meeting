@@ -13,6 +13,7 @@ library(reshape2)
 library(dplyr)
 library(tidyr)
 library("formattable")
+library(stats)
 
 ```
 
@@ -37,7 +38,7 @@ data2<-data2[,-5]
 aggdata<-melt(data2,id=(c("Taxa","Site")))
 
 ```
-Dropped 3 missing value, their IDs are MC381,MC389,MC393,MC76.
+Dropped 4 missing value, their IDs are MC381,MC389,MC393,MC76.
 
 ```{r}
 summ <- aggdata %>%                              
@@ -143,7 +144,7 @@ gridExtra::grid.arrange(hare2,turkey2,nrow=2,ncol=1)
 
 ```
 
-+ Check Outlier
+### Check Outlier
 
 ```{r}
 mean(filter(aggdata,Taxa=="Hare" & Site=="BAOX" & variable=="d15N_air")$value)
@@ -219,6 +220,84 @@ Take "Turkey" and "d15N_air" as an example:
 ```{r,echo=FALSE}
 qqnorm(aggdata[aggdata$Taxa=="Turkey"&aggdata$variable=="d15N_air",]$value)
 qqline(aggdata[aggdata$Taxa=="Turkey"&aggdata$variable=="d15N_air",]$value)
+```
+
+## Mann Whitney U Test
+```{r,echo=FALSE,include=FALSE}
+mann <- subset(aggdata,select = -Site) %>%                              
+  group_by(Taxa,variable) %>% 
+  na.omit(aggdata) %>%
+  summarize(rank = rank(value))
+formattable(mann)
+mann<- aggdata %>%                              
+  group_by(Taxa,variable) %>% 
+  na.omit(aggdata) %>%
+  cbind(rank=mann$rank)
+
+```
+
+
+
+
+Mann-Whitney U Test for deer.
+
+```{r}
+data_deer_dc<-data_deer[which(data_deer$variable=="d13C_VPDB"),]
+wilcox.test(value~Site,data=data_deer_dc)
+
+data_deer_apc<-data_deer[which(data_deer$variable=="ap_13C_VPDB"),] %>% na.omit(data_deer)
+wilcox.test(value~Site,data=data_deer_apc)
+
+data_deer_n<-data_deer[which(data_deer$variable=="d15N_air"),]
+wilcox.test(value~Site,data=data_deer_n)
+```
+
+Mann-Whitney U Test for Cottontail.
+
+```{r}
+data_cott_dc<-data_Cottontail[which(data_Cottontail$variable=="d13C_VPDB"),]
+wilcox.test(value~Site,data=data_cott_dc)
+
+data_cott_apc<-data_Cottontail[which(data_Cottontail$variable=="ap_13C_VPDB"),] 
+wilcox.test(value~Site,data=data_cott_apc)
+
+data_cott_n<-data_Cottontail[which(data_Cottontail$variable=="d15N_air"),]%>% na.omit(data_Cottontail)
+wilcox.test(value~Site,data=data_cott_n)
+```
+
+Mann-Whitney U Test for Hare.
+
+```{r}
+data_hare_dc<-data_Hare[which(data_Hare$variable=="d13C_VPDB"),]
+wilcox.test(value~Site,data=data_hare_dc)
+
+data_hare_apc<-data_Hare[which(data_Hare$variable=="ap_13C_VPDB"),] 
+wilcox.test(value~Site,data=data_hare_apc)
+
+data_hare_n<-data_Hare[which(data_Hare$variable=="d15N_air"),]
+wilcox.test(value~Site,data=data_hare_n)
+```
+
+Mann-Whitney U Test for Turkey.
+
+```{r}
+data_turkey_dc<-data_Turkey[which(data_Turkey$variable=="d13C_VPDB"),]
+wilcox.test(value~Site,data=data_turkey_dc)
+
+data_turkey_apc<-data_Turkey[which(data_Turkey$variable=="ap_13C_VPDB"),] 
+wilcox.test(value~Site,data=data_turkey_apc)
+
+data_turkey_n<-data_Turkey[which(data_Turkey$variable=="d15N_air"),]
+wilcox.test(value~Site,data=data_turkey_n)
+```
+
+```{r}
+#waining mean:
+#  The impact of ties means the Wilcoxon rank sum distribution cannot be used to calculate exact p-values. If ties occur in our data and we have fewer than 50 observations, the wilcox.test function returns a normal approximated p-value along with a warning message that says “cannot compute exact p-value with ties”.
+
+
+#Since this p-value is not less than 0.05, we fail to reject the null hypothesis. 
+
 ```
 
 
