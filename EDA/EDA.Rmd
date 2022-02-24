@@ -409,12 +409,12 @@ t.test(value ~ Site, data = test.turkey.d15N, var.equal = TRUE)
 ```{r}
 # "d15N_air" level in Cottontail groups
 test.Cottontail.d15N <- filter(aggdata, Taxa == "Cottontail" & variable== "d15N_air")
-with(test.Cottontail.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.9938
+with(test.Cottontail.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.09437
 with(test.Cottontail.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2703
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
 t.test(value ~ Site, data = test.Cottontail.d15N, var.equal = TRUE)
-# p = 0.02954 < 0.05
+# p = 0.0321 < 0.05
 # Reject!
 ```
 
