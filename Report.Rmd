@@ -51,6 +51,7 @@ This report consists of 4 main sections: Introduction, Checking and Testing, Dis
 # 3 Checking and Testing
 
 ## 3.1 Checking 
+
 ```{r, include=FALSE}
 #read data
 data<-read.xlsx("for_stats_peeps.xlsx")
@@ -455,9 +456,12 @@ t.test(value ~ Site, data = test.Cottontail.d15N, var.equal = TRUE)
 
 # 4 Discussion
 
+There exists an outlier point in the data set.
+
+We can not make sure that they are same at 100% level. We can only say that at 95% confidence interval, the diets between BAOX and PATT are the same. 
 
 
-# Conclusion
+# 5 Conclusion
 
 # Citation
 
