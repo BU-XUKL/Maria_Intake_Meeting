@@ -327,6 +327,91 @@ wilcox.test(value~Site,data=data_turkey_n)
 
 ## Check Mann-Whitney U Test with theory
 
+```{r}
+Utable<-read.xlsx("Mann-Whitney_Table_0.01.xlsx")
+
+Utest<-function(set1,set2){
+  l1<-length(set1)
+  l2<-length(set2)
+  set<-c(set1,set2)
+  set<-rbind(set,c(rep(1,l1),rep(2,l2)))
+  rset<-rank(set[1,])
+  R1<-sum(rset[1:l1])
+  R2<-sum(rset[(l1+1):(l1+l2)])
+  U1<-l1*l2+l1*(l1+1)/2-R1
+  U2<-l1*l2+l2*(l2+1)/2-R2
+  print(min(U1,U2))
+  print(Utable[l1,l2])
+  min(U1,U2)<Utable[l1,l2]
+}
+```
+
+Mann-Whitney U Test for deer.
+
+```{r,echo=FALSE,warning=FALSE}
+setA<-data_deer_dc[which(data_deer_dc$Site=="BAOX"),]
+setB<-data_deer_dc[which(data_deer_dc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_deer_apc[which(data_deer_apc$Site=="BAOX"),]
+setB<-data_deer_apc[which(data_deer_apc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_deer_n[which(data_deer_n$Site=="BAOX"),]
+setB<-data_deer_n[which(data_deer_n$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+```
+
+Mann-Whitney U Test for Cottontail.
+
+```{r,echo=FALSE,warning=FALSE}
+setA<-data_cott_dc[which(data_cott_dc$Site=="BAOX"),]
+setB<-data_cott_dc[which(data_cott_dc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_cott_apc[which(data_cott_apc$Site=="BAOX"),]
+setB<-data_cott_apc[which(data_cott_apc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_cott_n[which(data_cott_n$Site=="BAOX"),]
+setB<-data_cott_n[which(data_cott_n$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+```
+
+Mann-Whitney U Test for Hare.
+
+```{r,echo=FALSE,warning=FALSE}
+setA<-data_hare_dc[which(data_hare_dc$Site=="BAOX"),]
+setB<-data_hare_dc[which(data_hare_dc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_hare_apc[which(data_hare_apc$Site=="BAOX"),]
+setB<-data_hare_apc[which(data_hare_apc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_hare_n[which(data_hare_n$Site=="BAOX"),]
+setB<-data_hare_n[which(data_hare_n$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+```
+
+Mann-Whitney U Test for Turkey.
+
+```{r,echo=FALSE,warning=FALSE}
+setA<-data_turkey_dc[which(data_turkey_dc$Site=="BAOX"),]
+setB<-data_turkey_dc[which(data_turkey_dc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_turkey_apc[which(data_turkey_apc$Site=="BAOX"),]
+setB<-data_turkey_apc[which(data_turkey_apc$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+
+setA<-data_turkey_n[which(data_turkey_n$Site=="BAOX"),]
+setB<-data_turkey_n[which(data_turkey_n$Site=="Tlajinga"),]
+Utest(setA$value,setB$value)
+```
+
+
 Because we find that Cottontail of d15N_air test reject the null hypothesis due to p-value.
 We want to check Mann-Whitney U Test without R package again.
 ```{r,echo=FALSE,warning=FALSE}
@@ -344,7 +429,7 @@ mann_cott_n<-mann[which(mann$variable=="d15N_air" & mann$Taxa=="Cottontail"),]
 setA<-mann_cott_n[mann_cott_n$Site=="BAOX",]
 setB<-mann_cott_n[mann_cott_n$Site=="Tlajinga",]
 n1<-length(setA$Taxa)
-n2<-length(setA$Taxa)
+n2<-length(setB$Tlajinga)
 R1<-sum(setA$rank)
 R2<-sum(setB$rank)
 U1<-n1*n2+n1*(n1+1)/2-R1
