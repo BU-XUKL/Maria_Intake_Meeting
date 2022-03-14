@@ -196,14 +196,14 @@ sd(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$valu
 According to client, we did not exclude this outlier from the data set. Therefore, all the data below include this outlier point.
 
 ## 3.2 Testing
-## Density Test
 
-We would like to use the T-tests to find the difference of diets between two sites.
-We plan to try some statistic test or some regression to compare the isotopes level in two sites more precisely.
+### Two-Sample T-tests
 
-Firstly, we checked the normality.
+&nbsp; &nbsp;After finding We plan to try some statistic test or some regression to compare the isotopes level in two sites more precisely. We would like to use the T-tests to find the difference of diets between two sites.
 
-```{r,echo=FALSE,warning=FALSE}
+&nbsp; &nbsp;Firstly, we checked the normality.
+
+```{r,echo=FALSE,warning=FALSE, include=FALSE}
 # check the d13C_VPDB
 aggdata1 <- filter(aggdata, variable== "d13C_VPDB" & Site == "BAOX")
 ggplot1 <- ggplot(aggdata1, aes(value, colour = Taxa,fill=Taxa)) + geom_density(alpha = 0.3) +
@@ -218,10 +218,6 @@ ggplot2 <- ggplot(aggdata2, aes(value, colour = Taxa,fill=Taxa)) + geom_density(
   scale_color_brewer(palette="Dark2") +
   labs(x = "d13C_VPDB", y = "density", title = "4 kinds of animals'd13C_VPDB level distribution in Tlajinga")
 
-gridExtra::grid.arrange(ggplot1, ggplot2)
-```
-
-```{r,echo=FALSE,warning=FALSE}
 # check the d15N_air
 aggdata3 <- filter(aggdata, variable== "d15N_air" & Site == "BAOX")
 ggplot3 <- ggplot(aggdata3, aes(value, colour = Taxa,fill=Taxa)) + geom_density(alpha = 0.3) +
@@ -236,11 +232,6 @@ ggplot4 <- ggplot(aggdata4, aes(value, colour = Taxa,fill=Taxa)) + geom_density(
   scale_color_brewer(palette="Dark2") +
   labs(x = "d13C_VPDB", y = "density", title = "4 kinds of animals'd15N_air level distribution in Tlajinga")
 
-gridExtra::grid.arrange(ggplot3, ggplot4)
-```
-
-
-```{r,echo=FALSE,warning=FALSE}
 # check the ap_13C_VPDB
 aggdata5 <- filter(aggdata, variable== "ap_13C_VPDB" & Site == "BAOX")
 ggplot5 <- ggplot(aggdata5, aes(value, colour = Taxa,fill=Taxa)) + geom_density(alpha = 0.3) +
@@ -254,23 +245,172 @@ ggplot6 <- ggplot(aggdata6, aes(value, colour = Taxa,fill=Taxa)) + geom_density(
   scale_fill_brewer(palette="Dark2") +
   scale_color_brewer(palette="Dark2") +
   labs(x = "d13C_VPDB", y = "density", title = "4 kinds of animals'ap_13C_VPDB level distribution in Tlajinga")
-
-gridExtra::grid.arrange(ggplot5, ggplot6)
 ```
 
-+ Normal Distribution Test (Q-Q Plot)
-
-Take "Turkey" and "d15N_air" as an example:
-```{r,echo=FALSE}
-qqnorm(aggdata[aggdata$Taxa=="Turkey"&aggdata$variable=="d15N_air",]$value)
-qqline(aggdata[aggdata$Taxa=="Turkey"&aggdata$variable=="d15N_air",]$value)
+```{r fig.height=11, fig.width= 11, warning=FALSE}
+gridExtra::grid.arrange(ggplot1, ggplot2, ggplot3, ggplot4, ggplot5, ggplot6)
 ```
 
-### Two-Sample T-tests
+&nbsp; &nbsp;It is difficult to see from the figures whether they follow the normal distribution, but comparing the distributions of the two places, most of them follow different distributions. It is reasonable since our sample size is too small.
 
-After we checked the distribution of isotope levels for each animals in each space, since the sample size is too small to identify if they follow normal distributions. We decided to do some shapiro.test.
+&nbsp; &nbsp;Therefore, we also plot the Q-Q plots for checking the normality. The purpose of the quantile-quantile (QQ) plot is to show if two data sets come from the same distribution. Plotting the first data set's quantiles along the x-axis and plotting the second data set's quantiles along the y-axis is how the plot is constructed.
 
-Shapiro.test is a test of normality. If the p-value from the result is greater than the significance level (e.g. 0.05), we can assume the normality.
+```{r}
+# data set
+test.turkey.d13C <- filter(aggdata, Taxa == "Turkey" & variable== "d13C_VPDB")
+test.Cottontail.d13C <- filter(aggdata, Taxa == "Cottontail" & variable== "d13C_VPDB")
+test.Deer.d13C <- filter(aggdata, Taxa == "Deer" & variable== "d13C_VPDB")
+test.Hare.d13C <- filter(aggdata, Taxa == "Hare" & variable== "d13C_VPDB")
+
+test.turkey.d15N <- filter(aggdata, Taxa == "Turkey" & variable== "d15N_air")
+test.Cottontail.d15N <- filter(aggdata, Taxa == "Cottontail" & variable== "d15N_air")
+test.Deer.d15N <- filter(aggdata, Taxa == "Deer" & variable== "d15N_air")
+test.Hare.d15N <- filter(aggdata, Taxa == "Hare" & variable== "d15N_air")
+
+test.turkey.ap13C <- filter(aggdata, Taxa == "Turkey" & variable== "ap_13C_VPDB")
+test.Cottontail.ap13C <- filter(aggdata, Taxa == "Cottontail" & variable== "ap_13C_VPDB")
+test.Deer.ap13C <- filter(aggdata, Taxa == "Deer" & variable== "ap_13C_VPDB")
+test.Hare.ap13C <- filter(aggdata, Taxa == "Hare" & variable== "ap_13C_VPDB")
+```
+
+
+```{r,echo=FALSE, include=FALSE}
+# "d13C_VPDB" level in turkey groups
+plot1 <- ggplot(test.turkey.d13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d13C_VPDB" level in turkey groups')
+
+# "d13C_VPDB" level in Cottontail groups
+plot2 <- ggplot(test.Cottontail.d13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d13C_VPDB" level in cottontail groups')
+
+# "d13C_VPDB" level in Deer groups
+plot3 <- ggplot(test.Deer.d13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d13C_VPDB" level in deer groups')
+
+# "d13C_VPDB" level in Hare groups
+plot4 <- ggplot(test.Hare.d13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d13C_VPDB" level in hare groups')
+
+# "d15N_air" level in turkey groups
+plot5 <- ggplot(test.turkey.d15N, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d15N_air" level in turkey groups')
+
+# "d15N_air" level in Cottontail groups
+plot6 <- ggplot(test.Cottontail.d15N, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() +
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d15N_air" level in Cottontail groups')
+
+# "d15N_air" level in Deer groups
+plot7 <- ggplot(test.Deer.d15N, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d15N_air" level in Deer groups')
+
+# "d15N_air" level in Hare groups
+plot8 <- ggplot(test.Hare.d15N, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "d15N_air" level in Hare groups')
+
+# "ap_13C_VPDB" level in turkey groups
+plot9 <- ggplot(test.turkey.ap13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "ap_13C_VPDB" level in turkey groups')
+  
+# "ap_13C_VPDB" level in Cottontail groups
+plot10 <- ggplot(test.Cottontail.ap13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "ap_13C_VPDB" level in Cottontail groups')
+
+# "ap_13C_VPDB" level in Deer groups
+plot11 <- ggplot(test.Deer.ap13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "ap_13C_VPDB" level in Deer groups')
+
+# "ap_13C_VPDB" level in Hare groups
+plot12 <- ggplot(test.Hare.ap13C, aes(sample = value)) + 
+  stat_qq_band() +
+  stat_qq_point() + 
+  stat_qq_line(col = "steelblue", lwd = 0.5) + 
+  theme_bw() +
+  xlab("Theortical Quantiles") +
+  ylab("Sample Quantiles") +
+  ggtitle('Normal Q-Q plot of "ap_13C_VPDB" level in Hare groups')
+```
+
+```{r echo=FALSE, fig.height=6, fig.width= 8}
+gridExtra::grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, 
+                        plot7, plot8, plot9, plot10, plot11, plot12, 
+                        nrow = 4, ncol = 3)
+```
+
+&nbsp; &nbsp;Expect "d15N_air" level in turkey groups, as almost all the points fall approximately along this reference line, we can assume normality to some extent.
+
+&nbsp; &nbsp;After we checked the distribution of isotope levels for each animals in each space, since the sample size is too small to identify if they follow normal distributions. We decided to do some shapiro.test.
+
+&nbsp; &nbsp;Shapiro.test is a test of normality. If the p-value from the result is greater than the significance level (e.g. 0.05), we can assume the normality. Then, from the results of shapiro.test(), we can regard all groups have the normal distribution at 95% confidence interval.
+
+&nbsp; &nbsp;Since we have four different species and three isotope levels, we are supposed to have till 12 tests, which will exist the multiple testing problem. Therefore, we calculate the proper significant level so that the probability of observing at least one significant result due to chance remains below we desired significance level. The final significant level we set is 0.01. Moreover, We assume the null hypothesis is the isotope level for each species between two places are the same, while the alternative hypothesis is the isotope level for each species between two places are not the same. 
+
+&nbsp; &nbsp;At the 95% confidence interval, we can conclude that: all the isotope levels are the same between BAOX and PATT.
 
 
 
@@ -295,7 +435,7 @@ Based on all return values being false, we fail to reject the null hypothesis. S
 
 There exists an outlier point in the data set.
 
-We can not make sure that they are same at 100% level. We can only say that at 95% confidence interval, the diets between BAOX and PATT are the same. 
+Actually we .We can not make sure that they are same at 100% level. We can only say that at 95% confidence interval, the diets between BAOX and PATT are the same. 
 
 
 # 5 Conclusion
@@ -325,83 +465,164 @@ Two-Sample T-tests are as followings:
 # Ha : v1 != v2
 ```
 
-```{r,echo=FALSE}
+### "d13C_VPDB" level
+  
+```{r}
+# Assumption
+# H0 : v1  = v2
+# Ha : v1 != v2
+```
+
+```{r, echo=FALSE}
 # "d13C_VPDB" level in turkey groups
-test.turkey.d13C <- filter(aggdata, Taxa == "Turkey" & variable== "d13C_VPDB")
 with(test.turkey.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.4606
 with(test.turkey.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.7027
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
 
-t.test(value ~ Site, data = test.turkey.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.turkey.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.3323
 # Not reject!
 ```
 
-```{r,echo=FALSE}
+
+```{r include=FALSE}
 # "d13C_VPDB" level in Cottontail groups
-test.Cottontail.d13C <- filter(aggdata, Taxa == "Cottontail" & variable== "d13C_VPDB")
 with(test.Cottontail.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.5969
 with(test.Cottontail.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3941
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
-t.test(value ~ Site, data = test.Cottontail.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.Cottontail.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.8162
 # Not reject!
 ```
 
-
-```{r}
+```{r include=FALSE}
 # "d13C_VPDB" level in Deer groups
-test.Deer.d13C <- filter(aggdata, Taxa == "Deer" & variable== "d13C_VPDB")
 with(test.Deer.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.3914
 with(test.Deer.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2177
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
-t.test(value ~ Site, data = test.Deer.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.Deer.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.6657
 # Not reject!
 ```
 
-```{r}
+```{r include=FALSE}
 # "d13C_VPDB" level in Hare groups
-test.Hare.d13C <- filter(aggdata, Taxa == "Hare" & variable== "d13C_VPDB")
 with(test.Hare.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.2707
 with(test.Hare.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2447
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
 
-t.test(value ~ Site, data = test.Hare.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.Hare.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.3999
 # Not reject!
 ```
 
+
 ### "d15N_air" level
 
-```{r}
+```{r, include=FALSE}
 # "d15N_air" level in turkey groups
-test.turkey.d15N <- filter(aggdata, Taxa == "Turkey" & variable== "d15N_air")
 with(test.turkey.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.7717
 with(test.turkey.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4532
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
 
-t.test(value ~ Site, data = test.turkey.d15N, var.equal = TRUE)
+t.test(value ~ Site, data = test.turkey.d15N, conf.level = 0.99, var.equal = TRUE)
 # p = 0.2313
 # Not reject!
 ```
 
-```{r}
+
+```{r, include=FALSE}
 # "d15N_air" level in Cottontail groups
-test.Cottontail.d15N <- filter(aggdata, Taxa == "Cottontail" & variable== "d15N_air")
 with(test.Cottontail.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.09437
 with(test.Cottontail.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2703
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
-t.test(value ~ Site, data = test.Cottontail.d15N, var.equal = TRUE)
+t.test(value ~ Site, data = test.Cottontail.d15N, conf.level = 0.99, var.equal = TRUE)
 # p = 0.0321 < 0.05
 # Reject!
 ```
+
+
+```{r, include=FALSE}
+# "d15N_air" level in Deer groups
+with(test.Deer.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.5592
+with(test.Deer.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.7696
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+t.test(value ~ Site, data = test.Deer.d15N, conf.level = 0.99, var.equal = TRUE)
+# p = 0.3106
+# Not reject!
+```
+
+
+```{r, include=FALSE}
+# "d15N_air" level in Hare groups
+with(test.Hare.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.3232
+with(test.Hare.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4432
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+
+t.test(value ~ Site, data = test.Hare.d15N, conf.level = 0.99, var.equal = TRUE)
+# p = 0.4013
+# Not reject!
+```
+
+
+### "ap_13C_VPDB" level
+
+```{r, include=FALSE}
+# "ap_13C_VPDB" level in turkey groups
+with(test.turkey.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.5876
+with(test.turkey.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3992
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+
+t.test(value ~ Site, data = test.turkey.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.2241
+# Not reject!
+```
+
+```{r, include=FALSE}
+# "ap_13C_VPDB" level in Cottontail groups
+with(test.Cottontail.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.1675
+with(test.Cottontail.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4795
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+t.test(value ~ Site, data = test.Cottontail.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.6955
+# Reject!
+```
+
+
+```{r include=FALSE}
+# "ap_13C_VPDB" level in Deer groups
+with(test.Deer.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.54
+with(test.Deer.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3121
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+t.test(value ~ Site, data = test.Deer.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.4406
+# Not reject!
+```
+
+
+```{r include=FALSE}
+# "ap_13C_VPDB" level in Hare groups
+with(test.Hare.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.7399
+with(test.Hare.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2754
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+
+t.test(value ~ Site, data = test.Hare.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.8815
+# Not reject!
+```
+
 
 
 ### Mann Whitney U Test with R Package
@@ -555,7 +776,6 @@ setB<-data_turkey_n[which(data_turkey_n$Site=="Tlajinga"),]
 print("ap_13C_VPDB:")
 Utest(setA$value,setB$value)
 ```
-
 
 ## Resource
 
