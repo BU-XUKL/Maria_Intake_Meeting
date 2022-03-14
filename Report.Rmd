@@ -178,12 +178,22 @@ gridExtra::grid.arrange(hare2,turkey2,nrow=2,ncol=1)
 
 ### Check Outlier
 
-```{r}
-mean(filter(aggdata,Taxa=="Hare" & Site=="BAOX" & variable=="d15N_air")$value)
-sd(filter(aggdata,Taxa=="Hare" & Site=="BAOX" & variable=="d15N_air")$value)
-```
-outlier falls on mean +- 2sd, we believe it is not a outlier.
+We found one outlier which is one of Cottontail d15N_air variable in BAOX. 
+The outlier number is 13.6. The mean is 6.99. The sd is 2.86. 
+13.6 falls outside of $[mean-2sd , mean+2sd]=[1.27,12.71]$, so we believe it is a outlier.
 
+The selected data set is as follows:
+
+```{r,echo=FALSE}
+filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value
+```
+```{r,include=FALSE}
+max(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
+mean(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
+sd(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
+```
+
+According to client, we did not exclude this outlier from the data set. Therefore, all the data below include this outlier point.
 
 ## 3.2 Testing
 ## Density Test
@@ -263,17 +273,59 @@ After we checked the distribution of isotope levels for each animals in each spa
 Shapiro.test is a test of normality. If the p-value from the result is greater than the significance level (e.g. 0.05), we can assume the normality.
 
 
+
+## Mann Whitney U Test
+
+### Mann Whitney U Test with R Package
+
+We found that description of R function wilcox.test from R package stats: Performs one- and two-sample Wilcoxon tests on vectors of data; the latter is also known as ‘Mann-Whitney’ test. That was exactly what we need now. And the same as T-test, we use 99% confidence level and same null hypothesis to test.
+
+We can carefully look at these results. Since these p-values are not less than 0.01, we fail to reject the null hypothesis. 
+
+
+### Check Mann-Whitney U Test with theory
+
+We are concerned that small data size (about n=10) may affect the accuracy of the R package function. Therefore, we wrote a program to test the data in full accordance with the Mann-Whitney U Test theory with a significance level of .01. In the program, if the return value is True we can reject the null hypothesis, and if the return value is False, we fail to reject the null hypothesis.
+
+Based on all return values being false, we fail to reject the null hypothesis. Since we failed to reject the null hypothesis, we do not have sufficient evidence to say that the "Carbon and Nitrogen Level" of each animals in two sites are different.
+
+
+
+# 4 Discussion
+
+There exists an outlier point in the data set.
+
+We can not make sure that they are same at 100% level. We can only say that at 95% confidence interval, the diets between BAOX and PATT are the same. 
+
+
+# 5 Conclusion
+
+&nbsp; &nbsp;1.) We checked all her works, including the summary data table and box plots.
+
+&nbsp; &nbsp;2.) Use two methods - two samples t test and Mann-Whitney U Test, to show there is no significant difference in specific animals’ diets from BAOX and PATT.
+
+
+# Citation
+
+
+
+\newpage
+
+# Appendix
+
+## Test code 
+
 Two-Sample T-tests are as followings:
   
 ### "d13C_VPDB" level
   
-```{r}
+```{r,echo=FALSE}
 # Assumption
 # H0 : v1  = v2
 # Ha : v1 != v2
 ```
 
-```{r}
+```{r,echo=FALSE}
 # "d13C_VPDB" level in turkey groups
 test.turkey.d13C <- filter(aggdata, Taxa == "Turkey" & variable== "d13C_VPDB")
 with(test.turkey.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.4606
@@ -286,7 +338,7 @@ t.test(value ~ Site, data = test.turkey.d13C, var.equal = TRUE)
 # Not reject!
 ```
 
-```{r}
+```{r,echo=FALSE}
 # "d13C_VPDB" level in Cottontail groups
 test.Cottontail.d13C <- filter(aggdata, Taxa == "Cottontail" & variable== "d13C_VPDB")
 with(test.Cottontail.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.5969
@@ -297,6 +349,7 @@ t.test(value ~ Site, data = test.Cottontail.d13C, var.equal = TRUE)
 # p = 0.8162
 # Not reject!
 ```
+
 
 ```{r}
 # "d13C_VPDB" level in Deer groups
@@ -350,79 +403,63 @@ t.test(value ~ Site, data = test.Cottontail.d15N, var.equal = TRUE)
 # Reject!
 ```
 
-## Mann Whitney U Test
 
+### Mann Whitney U Test with R Package
 Mann-Whitney U Test for deer.
 
 ```{r,echo=FALSE,warning=FALSE}
 data_deer_dc<-data_deer[which(data_deer$variable=="d13C_VPDB"),]
-wilcox.test(value~Site,data=data_deer_dc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_deer_dc)
 
 data_deer_apc<-data_deer[which(data_deer$variable=="ap_13C_VPDB"),] %>% na.omit(data_deer)
-wilcox.test(value~Site,data=data_deer_apc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_deer_apc)
 
 data_deer_n<-data_deer[which(data_deer$variable=="d15N_air"),]
-wilcox.test(value~Site,data=data_deer_n)
+wilcox.test(value~Site,conf.level = 0.99,data=data_deer_n)
 ```
 
 Mann-Whitney U Test for Cottontail.
 
 ```{r,echo=FALSE,warning=FALSE}
 data_cott_dc<-data_Cottontail[which(data_Cottontail$variable=="d13C_VPDB"),]
-wilcox.test(value~Site,data=data_cott_dc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_cott_dc)
 
 data_cott_apc<-data_Cottontail[which(data_Cottontail$variable=="ap_13C_VPDB"),] 
-wilcox.test(value~Site,data=data_cott_apc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_cott_apc)
 
 data_cott_n<-data_Cottontail[which(data_Cottontail$variable=="d15N_air"),]%>% na.omit(data_Cottontail)
-wilcox.test(value~Site,data=data_cott_n)
+wilcox.test(value~Site,conf.level = 0.99,data=data_cott_n)
 ```
 
 Mann-Whitney U Test for Hare.
 
 ```{r,echo=FALSE,warning=FALSE}
 data_hare_dc<-data_Hare[which(data_Hare$variable=="d13C_VPDB"),]
-wilcox.test(value~Site,data=data_hare_dc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_hare_dc)
 
 data_hare_apc<-data_Hare[which(data_Hare$variable=="ap_13C_VPDB"),] 
-wilcox.test(value~Site,data=data_hare_apc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_hare_apc)
 
 data_hare_n<-data_Hare[which(data_Hare$variable=="d15N_air"),]
-wilcox.test(value~Site,data=data_hare_n)
+wilcox.test(value~Site,conf.level = 0.99,data=data_hare_n)
 ```
 
 Mann-Whitney U Test for Turkey.
 
 ```{r,echo=FALSE,warning=FALSE}
 data_turkey_dc<-data_Turkey[which(data_Turkey$variable=="d13C_VPDB"),]
-wilcox.test(value~Site,data=data_turkey_dc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_turkey_dc)
 
 data_turkey_apc<-data_Turkey[which(data_Turkey$variable=="ap_13C_VPDB"),] 
-wilcox.test(value~Site,data=data_turkey_apc)
+wilcox.test(value~Site,conf.level = 0.99,data=data_turkey_apc)
 
 data_turkey_n<-data_Turkey[which(data_Turkey$variable=="d15N_air"),]
-wilcox.test(value~Site,data=data_turkey_n)
+wilcox.test(value~Site,conf.level = 0.99,data=data_turkey_n)
 ```
 
-```{r}
-#waining mean:
-#  The impact of ties means the Wilcoxon rank sum distribution cannot be used to calculate exact p-values. If ties occur in our data and we have fewer than 50 observations, the wilcox.test function returns a normal approximated p-value along with a warning message that says “cannot compute exact p-value with ties”.
 
-
-#Since this p-value is not less than 0.05, we fail to reject the null hypothesis. 
-
-
-# Mann-Whitney U Test for Cottontail.
-
-# W=52, p-value= 0.03792
-
-# we can reject the null hypothesis:
-# two sites animals are the same
-```
-
-## Check Mann-Whitney U Test with theory
-
-```{r}
+### Check Mann-Whitney U Test with theory
+```{r,include=FALSE}
 Utable<-read.xlsx("Mann-Whitney_Table_0.01.xlsx")
 
 Utest<-function(set1,set2){
@@ -435,8 +472,8 @@ Utest<-function(set1,set2){
   R2<-sum(rset[(l1+1):(l1+l2)])
   U1<-l1*l2+l1*(l1+1)/2-R1
   U2<-l1*l2+l2*(l2+1)/2-R2
-  print(min(U1,U2))
-  print(Utable[l1,l2])
+  #print(min(U1,U2))
+  #print(Utable[l1,l2])
   min(U1,U2)<Utable[l1,l2]
 }
 ```
@@ -446,14 +483,18 @@ Mann-Whitney U Test for deer.
 ```{r,echo=FALSE,warning=FALSE}
 setA<-data_deer_dc[which(data_deer_dc$Site=="BAOX"),]
 setB<-data_deer_dc[which(data_deer_dc$Site=="Tlajinga"),]
+print("d13C_VPDB:")
 Utest(setA$value,setB$value)
+
 
 setA<-data_deer_apc[which(data_deer_apc$Site=="BAOX"),]
 setB<-data_deer_apc[which(data_deer_apc$Site=="Tlajinga"),]
+print("d15N_air:")
 Utest(setA$value,setB$value)
 
 setA<-data_deer_n[which(data_deer_n$Site=="BAOX"),]
 setB<-data_deer_n[which(data_deer_n$Site=="Tlajinga"),]
+print("ap_13C_VPDB:")
 Utest(setA$value,setB$value)
 ```
 
@@ -462,14 +503,17 @@ Mann-Whitney U Test for Cottontail.
 ```{r,echo=FALSE,warning=FALSE}
 setA<-data_cott_dc[which(data_cott_dc$Site=="BAOX"),]
 setB<-data_cott_dc[which(data_cott_dc$Site=="Tlajinga"),]
+print("d13C_VPDB:")
 Utest(setA$value,setB$value)
 
 setA<-data_cott_apc[which(data_cott_apc$Site=="BAOX"),]
 setB<-data_cott_apc[which(data_cott_apc$Site=="Tlajinga"),]
+print("d15N_air:")
 Utest(setA$value,setB$value)
 
 setA<-data_cott_n[which(data_cott_n$Site=="BAOX"),]
 setB<-data_cott_n[which(data_cott_n$Site=="Tlajinga"),]
+print("ap_13C_VPDB:")
 Utest(setA$value,setB$value)
 ```
 
@@ -478,14 +522,17 @@ Mann-Whitney U Test for Hare.
 ```{r,echo=FALSE,warning=FALSE}
 setA<-data_hare_dc[which(data_hare_dc$Site=="BAOX"),]
 setB<-data_hare_dc[which(data_hare_dc$Site=="Tlajinga"),]
+print("d13C_VPDB:")
 Utest(setA$value,setB$value)
 
 setA<-data_hare_apc[which(data_hare_apc$Site=="BAOX"),]
 setB<-data_hare_apc[which(data_hare_apc$Site=="Tlajinga"),]
+print("d15N_air:")
 Utest(setA$value,setB$value)
 
 setA<-data_hare_n[which(data_hare_n$Site=="BAOX"),]
 setB<-data_hare_n[which(data_hare_n$Site=="Tlajinga"),]
+print("ap_13C_VPDB:")
 Utest(setA$value,setB$value)
 
 ```
@@ -495,74 +542,29 @@ Mann-Whitney U Test for Turkey.
 ```{r,echo=FALSE,warning=FALSE}
 setA<-data_turkey_dc[which(data_turkey_dc$Site=="BAOX"),]
 setB<-data_turkey_dc[which(data_turkey_dc$Site=="Tlajinga"),]
+print("d13C_VPDB:")
 Utest(setA$value,setB$value)
 
 setA<-data_turkey_apc[which(data_turkey_apc$Site=="BAOX"),]
 setB<-data_turkey_apc[which(data_turkey_apc$Site=="Tlajinga"),]
+print("d15N_air:")
 Utest(setA$value,setB$value)
 
 setA<-data_turkey_n[which(data_turkey_n$Site=="BAOX"),]
 setB<-data_turkey_n[which(data_turkey_n$Site=="Tlajinga"),]
+print("ap_13C_VPDB:")
 Utest(setA$value,setB$value)
 ```
 
-
-Because we find that Cottontail of d15N_air test reject the null hypothesis due to p-value.
-We want to check Mann-Whitney U Test without R package again.
-```{r,echo=FALSE,warning=FALSE}
-mann <- subset(aggdata,select = -Site) %>%                         
-  group_by(Taxa,variable) %>% 
-  na.omit(aggdata) %>%
-  summarize(rank = rank(value))
-mann<- aggdata %>%                              
-  group_by(Taxa,variable) %>% 
-  na.omit(aggdata) %>%
-  cbind(rank=mann$rank)
-#formattable(mann)
-
-mann_cott_n<-mann[which(mann$variable=="d15N_air" & mann$Taxa=="Cottontail"),]
-setA<-mann_cott_n[mann_cott_n$Site=="BAOX",]
-setB<-mann_cott_n[mann_cott_n$Site=="Tlajinga",]
-n1<-length(setA$Taxa)
-n2<-length(setB$Tlajinga)
-R1<-sum(setA$rank)
-R2<-sum(setB$rank)
-U1<-n1*n2+n1*(n1+1)/2-R1
-U2<-n1*n2+n2*(n2+1)/2-R2
-#min(U1,U2)
-
-```
-
- Alpha=0.01, test statistic(7) and our critical value(7) cannot reject
-
- Alpha=0.05. Since our test statistic (13) is greater than our critical value (7), we fail to reject the null hypothesis.
-
-
- Theory : https://www.statology.org/mann-whitney-u-test/
- Table : https://www.statology.org/mann-whitney-u-table/
-
-
-
-
-# 4 Discussion
-
-There exists an outlier point in the data set.
-
-We can not make sure that they are same at 100% level. We can only say that at 95% confidence interval, the diets between BAOX and PATT are the same. 
-
-
-# 5 Conclusion
-
-# Citation
-
-
-
-\newpage
-
-# Appendix
 
 ## Resource
 
 **multiple testing**
 
 Megan Goldman, 2008, [Statistics for Bioinformatics ](https://www.stat.berkeley.edu/~mgoldman/Section0402.pdf)
+
+**Mann-Whitney U Test**
+
+[Mann-Whitney U Test Theory](https://www.statology.org/mann-whitney-u-test/)
+
+[Mann-Whitney U Test table](https://www.statology.org/mann-whitney-u-table/)
