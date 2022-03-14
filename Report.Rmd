@@ -189,6 +189,7 @@ outlier falls on mean +- 2sd, we believe it is not a outlier.
 ## Density Test
 
 We would like to use the T-tests to find the difference of diets between two sites.
+We plan to try some statistic test or some regression to compare the isotopes level in two sites more precisely.
 
 Firstly, we checked the normality.
 
@@ -257,7 +258,10 @@ qqline(aggdata[aggdata$Taxa=="Turkey"&aggdata$variable=="d15N_air",]$value)
 
 ### Two-Sample T-tests
 
-We plan to try some statistic test or some regression to compare the isotopes level in two sites more precisely.
+After we checked the distribution of isotope levels for each animals in each space, since the sample size is too small to identify if they follow normal distributions. We decided to do some shapiro.test.
+
+Shapiro.test is a test of normality. If the p-value from the result is greater than the significance level (e.g. 0.05), we can assume the normality.
+
 
 Two-Sample T-tests are as followings:
   
