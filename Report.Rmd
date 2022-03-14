@@ -2,7 +2,9 @@
 title: "Report"
 author: "Keliang Xu, Shuting Li, Tao He"
 date: "3/2/2022"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -281,11 +283,10 @@ with(test.turkey.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.7027
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
 
-t.test(value ~ Site, data = test.turkey.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.turkey.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.3323
 # Not reject!
 ```
-
 ```{r}
 # "d13C_VPDB" level in Cottontail groups
 test.Cottontail.d13C <- filter(aggdata, Taxa == "Cottontail" & variable== "d13C_VPDB")
@@ -293,7 +294,7 @@ with(test.Cottontail.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.5969
 with(test.Cottontail.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3941
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
-t.test(value ~ Site, data = test.Cottontail.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.Cottontail.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.8162
 # Not reject!
 ```
@@ -305,7 +306,7 @@ with(test.Deer.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.3914
 with(test.Deer.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2177
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
-t.test(value ~ Site, data = test.Deer.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.Deer.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.6657
 # Not reject!
 ```
@@ -318,10 +319,11 @@ with(test.Hare.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2447
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
 
-t.test(value ~ Site, data = test.Hare.d13C, var.equal = TRUE)
+t.test(value ~ Site, data = test.Hare.d13C, conf.level = 0.99, var.equal = TRUE)
 # p = 0.3999
 # Not reject!
 ```
+
 
 ### "d15N_air" level
 
@@ -333,7 +335,7 @@ with(test.turkey.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4532
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
 
-t.test(value ~ Site, data = test.turkey.d15N, var.equal = TRUE)
+t.test(value ~ Site, data = test.turkey.d15N, conf.level = 0.99, var.equal = TRUE)
 # p = 0.2313
 # Not reject!
 ```
@@ -345,9 +347,93 @@ with(test.Cottontail.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.09437
 with(test.Cottontail.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2703
 
 # From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
-t.test(value ~ Site, data = test.Cottontail.d15N, var.equal = TRUE)
+t.test(value ~ Site, data = test.Cottontail.d15N, conf.level = 0.99, var.equal = TRUE)
 # p = 0.0321 < 0.05
 # Reject!
+```
+
+
+```{r}
+# "d15N_air" level in Deer groups
+test.Deer.d15N <- filter(aggdata, Taxa == "Deer" & variable== "d15N_air")
+with(test.Deer.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.5592
+with(test.Deer.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.7696
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+t.test(value ~ Site, data = test.Deer.d15N, conf.level = 0.99, var.equal = TRUE)
+# p = 0.3106
+# Not reject!
+```
+
+
+```{r}
+# "d15N_air" level in Hare groups
+test.Hare.d15N <- filter(aggdata, Taxa == "Hare" & variable== "d15N_air")
+with(test.Hare.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.3232
+with(test.Hare.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4432
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+
+t.test(value ~ Site, data = test.Hare.d15N, conf.level = 0.99, var.equal = TRUE)
+# p = 0.4013
+# Not reject!
+```
+
+
+
+
+### "ap_13C_VPDB" level
+
+```{r}
+# "ap_13C_VPDB" level in turkey groups
+test.turkey.ap13C <- filter(aggdata, Taxa == "Turkey" & variable== "ap_13C_VPDB")
+with(test.turkey.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.5876
+with(test.turkey.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3992
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+
+t.test(value ~ Site, data = test.turkey.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.2241
+# Not reject!
+```
+
+```{r}
+# "ap_13C_VPDB" level in Cottontail groups
+test.Cottontail.ap13C <- filter(aggdata, Taxa == "Cottontail" & variable== "ap_13C_VPDB")
+with(test.Cottontail.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.1675
+with(test.Cottontail.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4795
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+t.test(value ~ Site, data = test.Cottontail.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.6955
+# Reject!
+```
+
+
+```{r}
+# "ap_13C_VPDB" level in Deer groups
+test.Deer.ap13C <- filter(aggdata, Taxa == "Deer" & variable== "ap_13C_VPDB")
+with(test.Deer.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.54
+with(test.Deer.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3121
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+t.test(value ~ Site, data = test.Deer.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.4406
+# Not reject!
+```
+
+
+```{r}
+# "ap_13C_VPDB" level in Hare groups
+test.Hare.ap13C <- filter(aggdata, Taxa == "Hare" & variable== "ap_13C_VPDB")
+with(test.Hare.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.7399
+with(test.Hare.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2754
+
+# From the output, the two p-values are greater than the significance level 0.05 implying that the distribution of the data are not significantly different from the normal distribution. In other words, we can assume the normality.
+
+t.test(value ~ Site, data = test.Hare.ap13C, conf.level = 0.99, var.equal = TRUE)
+# p = 0.8815
+# Not reject!
 ```
 
 ## Mann Whitney U Test
