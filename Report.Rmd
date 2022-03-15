@@ -42,7 +42,7 @@ The "Taxa" includes four types of animals, which are turkey, cottontails, deer, 
 
 The “site” includes two sites, which are BAOX and PATT. 
 
-The “Carbon and Nitrogen level” includes three stable carbon and nitrogen isotopes from two closely related sites (BAOX and PATT) from the same area and period. "d13C_VPDB", "ap_13C_VPDB" and "d15N_air". These isotopes can enter bones by eating and reflect the isotopic values of food sources. The first two carbon isotopes tell us about the level of human-grown plants in the diet, such as maize (corn). Carbon isotopes from collagen are protein-derived. Carbon isotopes from apatite (carbonate) reflect the whole diet. Nitrogen isotopes tell us about the protein in the diet.
+The “Carbon and Nitrogen level” includes three stable carbon and nitrogen isotopes from two closely related sites (BAOX and PATT) from the same area and period. "d13C_VPDB", "ap_13C_VPDB" and "d15N_air". These isotopes can enter bones by eating and reflect the isotopic values of food sources. The first two carbon isotopes tell us about the level of human-grown plants in the diet, such as maize (corn). Carbon isotopes from collagen are protein derived. Carbon isotopes from apatite (carbonate) reflect the whole diet. Nitrogen isotopes tell us about the protein in the diet.
 
 
 ## 2.2 Client’s Work
@@ -51,7 +51,7 @@ What our client has done:
   
 &nbsp; &nbsp;1.) Use ANOVA to test for the differences between BAOX and PATT for each species.
 
-&nbsp; &nbsp;2.) Examine box-plots and test just those groupings that look different.
+&nbsp; &nbsp;2.) Examine boxplots and test just those groupings that look different.
 
 
 ## 2.3 Our Responsibility
@@ -422,7 +422,7 @@ gridExtra::grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6,
 
 &nbsp; &nbsp;Expect "d15N_air" level in turkey groups, as almost all the points fall approximately along this reference line, we can assume normality to some extent.
 
-&nbsp; &nbsp;After we checked the distribution of isotope levels for each animals in each space, since the sample size is too small to identify if they follow normal distributions. We decided to do some shapiro.test.
+&nbsp; &nbsp;After we checked the distribution of isotope levels for each animal in each space, since the sample size is too small to identify if they follow normal distributions. We decided to do some shapiro.test.
 
 &nbsp; &nbsp;Shapiro.test is a test of normality. If the p-value from the result is greater than the significance level (e.g. 0.05), we can assume the normality. Then, from the results of shapiro.test(), we can regard all groups have the normal distribution at 95% confidence interval.
 
