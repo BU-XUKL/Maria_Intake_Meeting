@@ -477,7 +477,7 @@ p(at \ least \ one \ significant \ result) &= 1 - (1 - 0.01)^{12}\\
 
 # 5 Conclusion
 
-We checked all client's works, including the summary of data and box plots, our results are consistent with her. Then, after we did two tests to statistically analyse the main problem we want to solve, we conclude that there were no significant differences in animals’ diets from BAOX and PATT.
+&nbsp; &nbsp; We checked all client's works, including the summary of data and box plots, our results are consistent with hers. Then, after we did two tests to statistically analyse the main problem we want to solve, we conclude that there were no significant differences in animals’ diets from BAOX and PATT.
 
 
 # Citation
