@@ -14,10 +14,19 @@ library(dplyr)
 library(tidyr)
 library("formattable")
 library(stats)
+library(qqplotr)
 ```
 
 # 1 Abstract
-&nbsp; &nbsp;
+&nbsp;
+
+Now briefly summarize our progress of this project.	
+
+ &nbsp; &nbsp;1.) Data cleaning. Dropped missing data and wrangled the data.
+ 
+ &nbsp; &nbsp;2.)	Exploratory data analysis. Compared isotopes in different taxon and sites.
+ 
+ &nbsp; &nbsp;3.) Tests. Two-Sample T-tests and Mann Whitney U Test show that all the isotope levels are the same between BAOX and PATT.
 
 This report consists of 4 main sections: Introduction, Checking and Testing, Discussion, and Conclusion.
 
@@ -184,9 +193,10 @@ The outlier number is 13.6. The mean is 6.99. The sd is 2.86.
 
 The selected data set is as follows:
   
-  ```{r,echo=FALSE}
+```{r,echo=FALSE}
 filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value
 ```
+
 ```{r,include=FALSE}
 max(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
 mean(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
@@ -255,7 +265,7 @@ gridExtra::grid.arrange(ggplot1, ggplot2, ggplot3, ggplot4, ggplot5, ggplot6)
 
 &nbsp; &nbsp;Therefore, we also plot the Q-Q plots for checking the normality. The purpose of the quantile-quantile (QQ) plot is to show if two data sets come from the same distribution. Plotting the first data set's quantiles along the x-axis and plotting the second data set's quantiles along the y-axis is how the plot is constructed.
 
-```{r}
+```{r,include=FALSE}
 # data set
 test.turkey.d13C <- filter(aggdata, Taxa == "Turkey" & variable== "d13C_VPDB")
 test.Cottontail.d13C <- filter(aggdata, Taxa == "Cottontail" & variable== "d13C_VPDB")
@@ -430,7 +440,6 @@ We are concerned that small data size (about n=10) may affect the accuracy of th
 Based on all return values being false, we fail to reject the null hypothesis. Since we failed to reject the null hypothesis, we do not have sufficient evidence to say that the "Carbon and Nitrogen Level" of each animals in two sites are different.
 
 
-
 # 4 Discussion
 
 There exists an outlier point in the data set.
@@ -459,14 +468,6 @@ Two-Sample T-tests are as followings:
   
 ### "d13C_VPDB" level
   
-```{r,echo=FALSE}
-# Assumption
-# H0 : v1  = v2
-# Ha : v1 != v2
-```
-
-### "d13C_VPDB" level
-  
 ```{r}
 # Assumption
 # H0 : v1  = v2
@@ -486,7 +487,7 @@ t.test(value ~ Site, data = test.turkey.d13C, conf.level = 0.99, var.equal = TRU
 ```
 
 
-```{r include=FALSE}
+```{r, echo=FALSE}
 # "d13C_VPDB" level in Cottontail groups
 with(test.Cottontail.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.5969
 with(test.Cottontail.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3941
@@ -497,7 +498,7 @@ t.test(value ~ Site, data = test.Cottontail.d13C, conf.level = 0.99, var.equal =
 # Not reject!
 ```
 
-```{r include=FALSE}
+```{r, echo=FALSE}
 # "d13C_VPDB" level in Deer groups
 with(test.Deer.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.3914
 with(test.Deer.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2177
@@ -508,7 +509,7 @@ t.test(value ~ Site, data = test.Deer.d13C, conf.level = 0.99, var.equal = TRUE)
 # Not reject!
 ```
 
-```{r include=FALSE}
+```{r, echo=FALSE}
 # "d13C_VPDB" level in Hare groups
 with(test.Hare.d13C, shapiro.test(value[Site == "BAOX"])) # p = 0.2707
 with(test.Hare.d13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2447
@@ -523,7 +524,7 @@ t.test(value ~ Site, data = test.Hare.d13C, conf.level = 0.99, var.equal = TRUE)
 
 ### "d15N_air" level
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 # "d15N_air" level in turkey groups
 with(test.turkey.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.7717
 with(test.turkey.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4532
@@ -536,7 +537,7 @@ t.test(value ~ Site, data = test.turkey.d15N, conf.level = 0.99, var.equal = TRU
 ```
 
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 # "d15N_air" level in Cottontail groups
 with(test.Cottontail.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.09437
 with(test.Cottontail.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2703
@@ -548,7 +549,7 @@ t.test(value ~ Site, data = test.Cottontail.d15N, conf.level = 0.99, var.equal =
 ```
 
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 # "d15N_air" level in Deer groups
 with(test.Deer.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.5592
 with(test.Deer.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.7696
@@ -560,7 +561,7 @@ t.test(value ~ Site, data = test.Deer.d15N, conf.level = 0.99, var.equal = TRUE)
 ```
 
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 # "d15N_air" level in Hare groups
 with(test.Hare.d15N, shapiro.test(value[Site == "BAOX"])) # p = 0.3232
 with(test.Hare.d15N, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4432
@@ -575,7 +576,7 @@ t.test(value ~ Site, data = test.Hare.d15N, conf.level = 0.99, var.equal = TRUE)
 
 ### "ap_13C_VPDB" level
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 # "ap_13C_VPDB" level in turkey groups
 with(test.turkey.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.5876
 with(test.turkey.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3992
@@ -587,7 +588,7 @@ t.test(value ~ Site, data = test.turkey.ap13C, conf.level = 0.99, var.equal = TR
 # Not reject!
 ```
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 # "ap_13C_VPDB" level in Cottontail groups
 with(test.Cottontail.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.1675
 with(test.Cottontail.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.4795
@@ -599,7 +600,7 @@ t.test(value ~ Site, data = test.Cottontail.ap13C, conf.level = 0.99, var.equal 
 ```
 
 
-```{r include=FALSE}
+```{r, echo=FALSE}
 # "ap_13C_VPDB" level in Deer groups
 with(test.Deer.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.54
 with(test.Deer.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.3121
@@ -611,7 +612,7 @@ t.test(value ~ Site, data = test.Deer.ap13C, conf.level = 0.99, var.equal = TRUE
 ```
 
 
-```{r include=FALSE}
+```{r, echo=FALSE}
 # "ap_13C_VPDB" level in Hare groups
 with(test.Hare.ap13C, shapiro.test(value[Site == "BAOX"])) # p = 0.7399
 with(test.Hare.ap13C, shapiro.test(value[Site == "Tlajinga"])) # p = 0.2754
