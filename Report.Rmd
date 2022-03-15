@@ -6,13 +6,12 @@ output: html_document
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-# install.packages("foreign")
 library(ggplot2)
 library(openxlsx)
 library(reshape2)
 library(dplyr)
 library(tidyr)
-library("formattable")
+library(formattable)
 library(stats)
 library(qqplotr)
 ```
@@ -20,46 +19,51 @@ library(qqplotr)
 # 1 Abstract
 &nbsp;
 
+Because of isotopes can enter animals' bones by eating, through the comparisons of average levels of carbon and nitrogen isotopes from ancient animals bones in two sites of ancient Mexico, we can conclude about whether animals from two sites of ancient Mexico had similar diets.
+
 Now briefly summarize our progress of this project.	
 
- &nbsp; &nbsp;1.) Data cleaning. Dropped missing data and wrangled the data.
+ &nbsp; &nbsp;1.) Data cleaning. Dropped 4 missing data and wrangled the data.
  
  &nbsp; &nbsp;2.)	Exploratory data analysis. Compared isotopes in different taxon and sites.
  
- &nbsp; &nbsp;3.) Tests. Two-Sample T-tests and Mann Whitney U Test show that all the isotope levels are the same between BAOX and PATT.
+ &nbsp; &nbsp;3.) Tests. Did Two-Sample T-tests and Mann Whitney U Test to compare the average isotopes' levels between BAOX and PATT, two sites in ancient Mexico, for each kind of animals.
 
-This report consists of 4 main sections: Introduction, Checking and Testing, Discussion, and Conclusion.
+The conclusion we get is, at 0.01 significance level, all three isotope levels have non-significant difference between BAOX and PATT.
+
 
 # 2 Introduction
 
-## 2.1 Data Set Introduction
+## 2.1 Data Explanation
 
-&nbsp; &nbsp;The variables of interest are “Taxa”, “Site” and “Carbon and Nitrogen Level''. The “Taxa '' includes four types of animals, which are turkey, cottontails, deer, and hare, respectively. The “site” includes two cities, which are BAOX and PATT. 
+The variables of interest are "Taxa", "Site" and "Carbon and Nitrogen Level". 
 
-&nbsp; &nbsp;The “Carbon and Nitrogen level” includes stable carbon and nitrogen isotopes from two closely related sites (BAOX and PATT) from the same area and period. These enter bones by eating and reflect the isotopic values of food sources. Carbon isotopes tell us about the level of human-grown plants in the diet, such as maize (corn). Carbon isotopes from collagen are protein-derived. Carbon isotopes from apatite (carbonate) reflect the whole diet. Nitrogen isotopes tell us about the protein in the diet.
+The "Taxa" includes four types of animals, which are turkey, cottontails, deer, and hare. 
 
+The “site” includes two sites, which are BAOX and PATT. 
+
+The “Carbon and Nitrogen level” includes three stable carbon and nitrogen isotopes from two closely related sites (BAOX and PATT) from the same area and period. "d13C_VPDB", "ap_13C_VPDB" and "d15N_air". These isotopes can enter bones by eating and reflect the isotopic values of food sources. The first two carbon isotopes tell us about the level of human-grown plants in the diet, such as maize (corn). Carbon isotopes from collagen are protein-derived. Carbon isotopes from apatite (carbonate) reflect the whole diet. Nitrogen isotopes tell us about the protein in the diet.
 
 
 ## 2.2 Client’s Work
 
-
-&nbsp; &nbsp;So far, the client has:
+What our client has done:
   
 &nbsp; &nbsp;1.) Use ANOVA to test for the differences between BAOX and PATT for each species.
 
 &nbsp; &nbsp;2.) Examine box-plots and test just those groupings that look different.
 
 
-## 2.3 Client Requests and Deliverables
+## 2.3 Our Responsibility
 
-&nbsp; &nbsp;1.) Check all her works, including the summary data table and box plots.
+&nbsp; &nbsp;1.) Check all client's works, including the summary data table and box plots.
 
 &nbsp; &nbsp;2.) Use statistical methods to show there is no significant difference in specific animals’ diets from BAOX and PATT, except cottontails.
 
 
-# 3 Checking and Testing
+# 3 EDA and Testing
 
-## 3.1 Checking 
+## 3.1 Data Cleaning 
 
 ```{r, include=FALSE}
 #read data
@@ -83,7 +87,12 @@ aggdata<-melt(data2,id=(c("Taxa","Site")))
 ```
 Dropped 4 missing value, their IDs are MC381,MC389,MC393,MC76.
 
-```{r,include=FALSE}
+## 3.2 EDA
+
++ Summary of Data:
+
+&nbsp; &nbsp;The output is exactly same with client's work.
+```{r,echo=FALSE,message=FALSE}
 summ <- aggdata %>%                              
   group_by(Taxa,Site,variable) %>% 
   na.omit(aggdata) %>%
@@ -93,11 +102,10 @@ summ <- aggdata %>%
             max = max(value),
             sd = sd(value),
             count=n())
-#formattable(summ)
-
+(summ)
 ```
 
-## EDA
+
 ```{r,echo=FALSE,include=FALSE,warning=FALSE}
 ggplot(data = aggdata, aes(x=variable,y=value, fill=variable)) + 
   geom_boxplot()+
