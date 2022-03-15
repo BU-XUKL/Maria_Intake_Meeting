@@ -477,9 +477,9 @@ p(at \ least \ one \ significant \ result) &= 1 - (1 - 0.01)^{12}\\
 
 # 5 Conclusion
 
-&nbsp; &nbsp;1.) We checked all her works, including the summary data table and box plots.
+We checked all her forward works ,including the summary data table and box plots. The results of our inspection are consistent with hers, indicating that there is no problem with her data processing and EDA. At the same time, we added some EDA plots to give a better understanding of the data set.
 
-&nbsp; &nbsp;2.) Use two methods - two samples t test and Mann-Whitney U Test, to show there is no significant difference in specific animals’ diets from BAOX and PATT.
+Next, we did some tests to meet the customer's needs. We used two methods - two samples t test and Mann-Whitney U Test, to show there is no significant difference in specific animals’ diets from BAOX and PATT.
 
 
 # Citation
