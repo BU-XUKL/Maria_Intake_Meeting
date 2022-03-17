@@ -19,19 +19,8 @@ library(qqplotr)
 ```
 
 # 1 Abstract
-&nbsp;
 
-&nbsp; &nbsp; Since isotopes can enter animals' bones by eating, through the comparisons of average levels of carbon and nitrogen isotopes from ancient animals' bones in two sites of ancient Mexico, we can conclude about whether animals from two sites of ancient Mexico had similar diets.
-
-&nbsp; &nbsp; Now briefly summarize our progress of this project.	
-
- &nbsp; &nbsp;1.) Data cleaning. Dropped 4 missing data and wrangled the data.
- 
- &nbsp; &nbsp;2.)	Exploratory data analysis. Compared isotopes in different taxon and sites.
- 
- &nbsp; &nbsp;3.) Tests. Did Two-Sample T-tests and Mann Whitney U test to compare the average isotopes' levels between BAOX and PATT, two sites in ancient Mexico, for each kind of animal.
-
-&nbsp; &nbsp; The conclusion we get is, at a 0.01 significance level, all three isotope levels have a non-significant difference between BAOX and PATT.
+&nbsp; &nbsp; Since isotopes can enter animals' bones by eating, through the comparisons of average levels of carbon and nitrogen isotopes from ancient animals' bones in two sites of ancient Mexico, we can conclude about whether animals from two sites of ancient Mexico had similar diets. After we cleaned our data set, we summary it and do some exploratory data analysis to see the distribution of the isotope levels. Moreover, we use two-sample t-tests and Mann-Whitney U Test whether there exists significant difference in diets between BAOX and PATT. This report consists of 4 main sections: Introduction, EDA and Testing, Discussion, and Conclusion.
 
 
 # 2 Introduction
@@ -51,9 +40,9 @@ library(qqplotr)
 
 What our client has done:
   
-&nbsp; &nbsp;1.) Use ANOVA to test for the differences between BAOX and PATT for each species.
+&nbsp; &nbsp;1.) Used Mann Whitney U tests to test the differences between BAOX and PATT for each species.
 
-&nbsp; &nbsp;2.) Examine box-plots and test just those groupings that look different.
+&nbsp; &nbsp;2.) Examined box-plots and test just those groupings that look different.
 
 
 ## 2.3 Our Responsibility
@@ -463,11 +452,11 @@ p(at \ least \ one \ significant \ result) &= 1 - (no \ significant \ results)\\
 &= 1 - (1 - \alpha)^{12}\\
 \end{aligned}$$
 
-&nbsp; &nbsp;If we set the significant level with 0.05, $$\begin{aligned}
+&nbsp; &nbsp; If we set the significant level with 0.05, $$\begin{aligned}
 p(at \ least \ one \ significant \ result) &= 1 - (1 - 0.05)^{12}\\ 
 &	\approx 0.46,\\
 \end{aligned}$$
-&nbsp; &nbsp; which means the probability of rejecting the null hypothesis by chance is 0.46, almost a half. Then, we decided to set the significant level with 0.01, $$\begin{aligned}
+&nbsp; &nbsp; the probability of rejecting the null hypothesis by chance is 0.46, almost a half. Then, we decided to set the significant level with 0.01, $$\begin{aligned}
 p(at \ least \ one \ significant \ result) &= 1 - (1 - 0.01)^{12}\\ 
 &	\approx 0.11,\\
 \end{aligned}$$
