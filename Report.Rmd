@@ -470,7 +470,7 @@ p(at \ least \ one \ significant \ result) &= 1 - (1 - 0.01)^{12}\\
 
 
 # Citation
-Andrew D. Somerville & Nawa Sugiyama & Linda R. Manzanilla & Margaret J. Schoeninger1,Leporid management and specialized food productionat Teotihuacan: stable isotope data from cottontail and jackrabbitbone collagen, 6 October, 2016
+Somerville, A.D., Sugiyama, N., Manzanilla, L.R. et al. Leporid management and specialized food production at Teotihuacan: stable isotope data from cottontail and jackrabbit bone collagen. Archaeol Anthropol Sci 9, 83–97 (2017). https://doi.org/10.1007/s12520-016-0420-2
 
 
 \newpage
