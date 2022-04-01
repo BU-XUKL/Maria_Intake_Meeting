@@ -1,10 +1,9 @@
 ---
-title: "Report"
+title: "Ancient Animals' Role Analysis Final Report"
 author: "Keliang Xu, Shuting Li, Tao He"
-date: "3/2/2022"
+date: "3/21/2022"
 output:
   pdf_document: default
-  html_document: default
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -13,48 +12,22 @@ library(openxlsx)
 library(reshape2)
 library(dplyr)
 library(tidyr)
-library(formattable)
+library(stargazer)
 library(stats)
 library(qqplotr)
 ```
 
-# 1 Abstract
+# Abstract
 
-&nbsp; &nbsp; Since isotopes can enter animals' bones by eating, through the comparisons of average levels of carbon and nitrogen isotopes from ancient animals' bones in two sites of ancient Mexico, we can conclude about whether animals from two sites of ancient Mexico had similar diets. After we cleaned our data set, we summary it and do some exploratory data analysis to see the distribution of the isotope levels. Moreover, we use two-sample t-tests and Mann-Whitney U Test whether there exists significant difference in diets between BAOX and PATT. This report consists of 4 main sections: Introduction, EDA and Testing, Discussion, and Conclusion.
-
-
-# 2 Introduction
-
-## 2.1 Data Explanation
-
-&nbsp; &nbsp; The variables of interest are "Taxa", "Site" and "Carbon and Nitrogen Level". 
-
-&nbsp; &nbsp; The "Taxa" includes four types of animals, which are turkey, cottontails, deer, and hare. 
-
-&nbsp; &nbsp; The “site” includes two sites, which are BAOX and PATT. 
-
-&nbsp; &nbsp; The “Carbon and Nitrogen level” includes three stable carbon and nitrogen isotopes from two closely related sites (BAOX and PATT) from the same area and period. "d13C_VPDB", "ap_13C_VPDB" and "d15N_air". These isotopes can enter bones by eating and reflect the isotopic values of food sources. The first two carbon isotopes tell us about the level of human-grown plants in the diet, such as maize (corn). Carbon isotopes from collagen are protein-derived. Carbon isotopes from apatite (carbonate) reflect the whole diet. Nitrogen isotopes tell us about the protein in the diet.
+This study is an analysis of the role of animals in the ancient economy at Teotihuacan Mexico. The purpose of this report is to provide statistical analysis to this study with the main goal of analyzing whether there exist significant differences in animals' diets from different sites. We did some exploratory data analysis to see the distribution of the isotope levels and used two-sample t-tests and Mann-Whitney U Test to compare the average levels of isotopes in different sites. Finally, we concluded that there are no significant differences in animals’ diets from BAOX and PATT.  
 
 
-## 2.2 Client’s Work
+# Introduction
 
-What our client has done:
-  
-&nbsp; &nbsp;1.) Used Mann Whitney U tests to test the differences between BAOX and PATT for each species.
-
-&nbsp; &nbsp;2.) Examined box-plots and test just those groupings that look different.
+The isotopes we focus on are stable carbon and nitrogen isotopes, which can reflect the level of human-grown plants and protein in the diet respectively. Since isotopes can enter animals' bones by eating, by comparing the average levels of carbon and nitrogen isotopes from ancient animals' bones between two sites of ancient Mexico, we can get insight into whether animals from these two sites had similar diets.
 
 
-## 2.3 Our Responsibility
-
-&nbsp; &nbsp;1.) Check all client's works, including the summary data table and box plots.
-
-&nbsp; &nbsp;2.) Use statistical methods to show there is no significant difference in specific animals’ diets from BAOX and PATT, except cottontails.
-
-
-# 3 EDA and Testing
-
-## 3.1 Data Cleaning 
+# Data Cleaning and Processing
 
 ```{r, include=FALSE}
 #read data
@@ -62,58 +35,62 @@ data<-read.xlsx("for_stats_peeps.xlsx")
 data<-data[,-2:-6]
 data<-data[,-4]
 removedata<-c("MC381","MC389","MC393","MC76")
-#data <- na.omit(data)
 i<-1
 for(i in i:4) data<-subset(data,data$ID!=removedata[i])
 
-```
-
-```{r, include=FALSE}
-#tidy data
 data2<-data[,2:8]
 data2<-data2[,-3]
 data2<-data2[,-5]
 aggdata<-melt(data2,id=(c("Taxa","Site")))
-
 ```
-Dropped 4 missing value, their IDs are MC381,MC389,MC393,MC76.
 
-## 3.2 EDA
+Firstly, to clean this big data set, and also keep the same as the client's data, we dropped 4 useless observations, which IDs are MC381, MC389, MC393, MC76. 
 
-+ Summary of Data:
+Secondly, to help focus on the main question, we removed all irrelevant variables, the final variables of interest are "Taxa", "Site", "d13C_VPDB", "ap_13C_VPDB" and "d15N_air". Then we combined "d13C_VPDB", "ap_13C_VPDB" and "d15N_air" into one variable which named "isotope level".
 
-&nbsp; &nbsp;The output is exactly same with client's work.
-```{r,echo=FALSE,message=FALSE}
+
+## Data Description
+
+                                      Table1: Data Explanation
+| Variable                                  | Explanation                              | Description |
+| :---:                                     | :---:                                    |:---:              |
+| Taxa                                      | Animal Species                           | turkey, cottontails, deer, hare |
+| site                                      | Ancient Mexico Cities                    | BAOX, PATT | 
+| isotope level                             | Carbon and Nitrogen level                | d13C_VPDB, ap_13C_VPDB, d15N_air | 
+
+\newpage
+
+# EDA
+
+## Summary of Data:
+```{r,echo=FALSE}
 summ <- aggdata %>%                              
   group_by(Taxa,Site,variable) %>% 
   na.omit(aggdata) %>%
-  summarize(min = min(value),
-            median = median(value),
-            mean = mean(value),
-            max = max(value),
-            sd = sd(value),
+  summarize(min = round(min(value),2),
+            median = round(median(value),2),
+            mean = round(mean(value),2),
+            max = round(max(value),2),
+            sd = round(sd(value),2),
             count=n())
-(summ)
+knitr::kable(summ, caption = "Summary of Data")
 ```
 
+In this form, we can see the mean, median, maximum, minimum, and standard deviation values of isotopes for each kind of animal in each site. The result is exactly same with client's result.
 
-```{r,echo=FALSE,include=FALSE,warning=FALSE}
-ggplot(data = aggdata, aes(x=variable,y=value, fill=variable)) + 
-  geom_boxplot()+
-  geom_jitter(shape=16, position=position_jitter(0.2))+
-  facet_wrap(~Taxa,nrow = 1)
-```
+We can see almost all average isotope levels are similar between different sites, except Nitrogen values in cottontail.
+\newpage
 
-&nbsp; &nbsp; In this plot, we compared specific isotopes level in 4 taxon. It showed the level of d15N_air is less diverse than other 2 isotopes.
+## Boxplot
 
-```{r, echo=FALSE,warning=FALSE, fig.width = 7, fig.height=3}
+```{r fig.align='center', fig.height=5, fig.width = 9, fig.cap="Isotope Levels vs. Taxa", echo=FALSE,warning=FALSE}
 ggplot(data = aggdata, aes(x=Taxa,y=value, fill=Taxa)) + 
   geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))+
   facet_wrap(~variable,nrow = 1)
 ```
 
-Then we compared isotopes in two sites for each kind of animals. The plot shows that the median level of d13C_VPDB and d15N_air in BAOX is higher than Tlajinga of cottontail. Similarly, the median level of d13C_VPDB and d15N_air of hare also show difference in the boxplot.
+In figure 1, we compared isotopes levels in 4 taxa. It showed the level of d15N_air is less diverse than the other 2 isotopes.
 
 
 ```{r, echo=FALSE,warning=FALSE}
@@ -175,43 +152,26 @@ turkey2<-ggplot(data = data_Turkey, aes(x=Site,y=value, fill=Site)) +
 
 ```
 
-```{r, echo=FALSE,warning=FALSE}
+```{r fig.align='center', fig.height=10, fig.width = 9, fig.cap="Isotope Levels vs. Site", echo=FALSE, warning=FALSE}
 
 #gridExtra::grid.arrange(deer1,cot1,nrow=2,ncol=1)
 #gridExtra::grid.arrange(hare1,turkey1,nrow=2,ncol=1)
 
-gridExtra::grid.arrange(deer2,cot2,nrow=2,ncol=1)
-gridExtra::grid.arrange(hare2,turkey2,nrow=2,ncol=1)
-
+gridExtra::grid.arrange(deer2,cot2,hare2,turkey2, nrow=4,ncol=1)
 ```
 
-### Check Outlier
 
-We found one outlier which is one of Cottontail d15N_air variable in BAOX. 
-The outlier number is 13.6. The mean is 6.99. The sd is 2.86. 
-13.6 falls outside of $[mean-2sd , mean+2sd]=[1.27,12.71]$, so we believe it is a outlier.
+Then we compared isotopes in two sites for each kind of animal. Figure 2 and figure 3 showed that the median level of d13C_VPDB and d15N_air in BAOX is a little higher than Tlajinga of cottontail. Similarly, the median level of d13C_VPDB and d15N_air of hare also show differences in the boxplot.
 
-The selected data set is as follows:
-  
-```{r,echo=FALSE}
-filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value
-```
+\newpage
 
-```{r,include=FALSE}
-max(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
-mean(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
-sd(filter(aggdata,Taxa=="Cottontail" & Site=="BAOX" & variable=="d15N_air")$value)
-```
+# Testing
 
-According to client, we did not exclude this outlier from the data set. Therefore, all the data below include this outlier point.
+## Two-Sample T-tests
 
-## 3.2 Testing
+After finding We plan to try some statistic tests or some regression to compare the isotopes level in two sites more precisely. We would like to use the T-tests to find the difference of diets between two sites.
 
-### Two-Sample T-tests
-
-&nbsp; &nbsp;After finding We plan to try some statistic test or some regression to compare the isotopes level in two sites more precisely. We would like to use the T-tests to find the difference of diets between two sites.
-
-&nbsp; &nbsp;Firstly, we checked the normality.
+Firstly, we checked the normality.
 
 ```{r,echo=FALSE,warning=FALSE, include=FALSE}
 # check the d13C_VPDB
@@ -257,13 +217,13 @@ ggplot6 <- ggplot(aggdata6, aes(value, colour = Taxa,fill=Taxa)) + geom_density(
   labs(x = "d13C_VPDB", y = "density", title = '"ap_13C_VPDB level" distribution in Tlajinga')
 ```
 
-```{r fig.height=6, fig.width= 8, warning=FALSE,echo=FALSE}
+```{r fig.height=6, fig.width= 9, fig.cap="Distribution of Three Isotope Levels For Each Species In Each Place", warning=FALSE,echo=FALSE}
 gridExtra::grid.arrange(ggplot1, ggplot2, ggplot3, ggplot4, ggplot5, ggplot6)
 ```
 
-&nbsp; &nbsp; It is difficult to observe from the figures whether they follow the normal distribution, but comparing the distributions of the two places, most of them follow different distributions. It is reasonable since our sample size is too small.
+It is difficult to observe from the figures whether they follow the normal distribution. But comparing the distributions of the two places, most of them follow different distributions. It is reasonable since our sample size is too small.
 
-&nbsp; &nbsp; Therefore, we also plot the Q-Q plots for checking the normality. The purpose of the quantile-quantile (QQ) plot is to show if two data sets come from the same distribution. Plotting the first data set's quantiles along the x-axis and plotting the second data set's quantiles along the y-axis is how the plot is constructed.
+Therefore, we also plot the Q-Q plots for checking the normality. The purpose of the quantile-quantile (Q-Q) plot is to show if two data sets come from the same distribution. Plotting the first data set's quantiles along the x-axis and plotting the second data set's quantiles along the y-axis is how the plot constructed.
 
 ```{r,include=FALSE}
 # data set
@@ -282,7 +242,6 @@ test.Cottontail.ap13C <- filter(aggdata, Taxa == "Cottontail" & variable== "ap_1
 test.Deer.ap13C <- filter(aggdata, Taxa == "Deer" & variable== "ap_13C_VPDB")
 test.Hare.ap13C <- filter(aggdata, Taxa == "Hare" & variable== "ap_13C_VPDB")
 ```
-
 
 ```{r,echo=FALSE, include=FALSE}
 # "d13C_VPDB" level in turkey groups
@@ -406,29 +365,30 @@ plot12 <- ggplot(test.Hare.ap13C, aes(sample = value)) +
   ggtitle('Normal Q-Q plot of "ap_13C_VPDB" level in Hare groups')
 ```
 
-```{r echo=FALSE, fig.height=20, fig.width= 17}
+```{r echo=FALSE, fig.height=19, fig.width= 17, fig.cap="Normal Q-Q Plots in Each Species Group"}
 gridExtra::grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, 
                         plot7, plot8, plot9, plot10, plot11, plot12, 
                         nrow = 4, ncol = 3)
 ```
 
-&nbsp; &nbsp; Expect "d15N_air" level in turkey groups, as almost all the points fall approximately along this reference line, we can assume normality to some extent.
+\newpage
 
-&nbsp; &nbsp; After we checked the distribution of isotope levels for each animal in each space, the sample size is too small to identify if they follow normal distributions. We decided to do some shapiro.test.
+From the normal Q-Q plots, except "d15N_air" level in turkey groups, as almost all the points fall approximately along this reference line, we can assume normality to some extent.
 
-&nbsp; &nbsp; Shapiro.test is a test of normality. If the p-value from the result is greater than the significance level (e.g. 0.05), we can assume the normality. Then, from the results of shapiro.test(), we can regard all groups have the normal distribution at 95% confidence interval.
+After we checked the distribution of isotope levels for each animal in each space, the sample size is too small to identify if they follow normal distributions. We decided to do some shapiro.test.
 
-&nbsp; &nbsp; Since we have four different species and three isotope levels, we are supposed to have till 12 tests, which will exist the multiple testing problem. Therefore, we calculate the proper significant level so that the probability of observing at least one significant result due to chance remains below we desired significance level. The final significant level we set is 0.01. Moreover, We assume the null hypothesis is the isotope level for each species between the two places are the same, while the alternative hypothesis is the isotope level for each species between the two places are not the same. 
+Shapiro.test is a test of normality. If the p-value from the result is greater than the significance level (e.g. 0.05), we can assume the normality. Then, from the results of shapiro.test(), we can regard all groups have the normal distribution at 95% confidence interval.
 
-&nbsp; &nbsp; At the 99% confidence interval, we can conclude that: all the isotope levels are the same between BAOX and PATT.
+Since we have four different species and three isotope levels, we are supposed to have till 12 tests, which will exist the multiple testing problem. Therefore, we calculate the proper significant level so that the probability of observing at least one significant result due to chance remains below we desired significance level. The final significant level we set is 0.01. Moreover, We assume the null hypothesis is the isotope level for each species between the two places are the same, while the alternative hypothesis is the isotope level for each species between the two places are not the same. 
 
+At the 99% confidence interval, we can conclude that: all the isotope levels are the same between BAOX and PATT.
 
 
 ## Mann Whitney U Test
 
 ### Mann Whitney U Test with R Package
 
-We found that description of R function wilcox.test from R package stats: Performs one- and two-sample Wilcoxon tests on vectors of data; the latter is also known as ‘Mann-Whitney’ test. That was exactly what we need now. And the same as T-test, we use 99% confidence level and same null hypothesis to test.
+We found that description of R function wilcox.test from R package stats: Performs one- and two-sample Wilcoxon tests on vectors of data; the latter is also known as ‘Mann-Whitney’ test. That was exactly what we need. And the same as T-test, we use 99% confidence level and same null hypothesis to test.
 
 We can carefully look at these results. Since these p-values are not less than 0.01, we fail to reject the null hypothesis. 
 
@@ -437,14 +397,14 @@ We can carefully look at these results. Since these p-values are not less than 0
 
 We are concerned that small data size (about n=10) may affect the accuracy of the R package function. Therefore, we wrote a program to test the data in full accordance with the Mann-Whitney U Test theory with a significance level of .01. In the program, if the return value is True we can reject the null hypothesis, and if the return value is False, we fail to reject the null hypothesis.
 
-Based on all return values being false, we fail to reject the null hypothesis. Since we failed to reject the null hypothesis, we do not have sufficient evidence to say that the "Carbon and Nitrogen Level" of each animals in two sites are different.
+Based on all return values being false, we fail to reject the null hypothesis. Since we fail to reject the null hypothesis, we do not have sufficient evidence to say that the "Carbon and Nitrogen Level" of each animals in two sites are different.
 
 
-# 4 Discussion
+# Discussion
 
-&nbsp; &nbsp; When we checked the normality of the data set, we use the shapiro.test() to confirm the distribution of those isotope levels. However, the disadvantage of this method is we can not suppose the distribution of isotope level has not the significant difference with normal distribution at 95% confidence interval. We can not make sure that they are exactly following the normal distribution. Similarly, when we do the t-tests, we conclude that the isotope levels for each species are the same between the two close places. We still can not say they are the same at 100% level. We can only say that at 95% confidence interval, the diets between BAOX and PATT are the same. 
+When we checked the normality of the data set, we use the shapiro.test() to confirm the distribution of those isotope levels. However, the disadvantage of this method is we can not suppose the distribution of isotope level has not the significant difference with normal distribution at 95% confidence interval. We can not make sure that they are exactly following the normal distribution. Similarly, when we do the t-tests, we conclude that the isotope levels for each species are the same between the two close places. We still can not say they are the same at 100% level. We can only say that at 95% confidence interval, the diets between BAOX and PATT are the same. 
 
-&nbsp; &nbsp; Actually, we firstly use the most common significant level with 0.05 to do the two-sample t-tests. However, the results show that there exists a significant one among the 12 tests. At first blush, this doesn’t seem like a bad outcome. However, consider a case where we have 12 hypotheses to test, and a significance level of 0.05. There exists the probability of observing at least one significant result just due to chance. 
+Actually, we firstly use the most common significant level with 0.05 to do the two-sample t-tests. However, the results show that there exists a significant one among the 12 tests. At first blush, this doesn’t seem like a bad outcome. However, considering a case where we have 12 hypotheses to test, and a significance level of 0.05, there exists the probability of observing at least one significant result just due to chance. 
 
 $$\begin{aligned}
 p(at \ least \ one \ significant \ result) &= 1 - (no \ significant \ results)\\ 
@@ -452,21 +412,21 @@ p(at \ least \ one \ significant \ result) &= 1 - (no \ significant \ results)\\
 &= 1 - (1 - \alpha)^{12}\\
 \end{aligned}$$
 
-&nbsp; &nbsp; If we set the significant level with 0.05, $$\begin{aligned}
+If we set the significant level with 0.05, $$\begin{aligned}
 p(at \ least \ one \ significant \ result) &= 1 - (1 - 0.05)^{12}\\ 
 &	\approx 0.46,\\
 \end{aligned}$$
-&nbsp; &nbsp; the probability of rejecting the null hypothesis by chance is 0.46, almost a half. Then, we decided to set the significant level with 0.01, $$\begin{aligned}
+the probability of rejecting the null hypothesis by chance will be 0.46, almost a half. Then, we decided to set the significant level with 0.01, $$\begin{aligned}
 p(at \ least \ one \ significant \ result) &= 1 - (1 - 0.01)^{12}\\ 
 &	\approx 0.11,\\
 \end{aligned}$$
-&nbsp; &nbsp; which significantly reduces chance to fail to reject the null hypothesis.
+which significantly reduces chance to fail to reject the null hypothesis. Therefore, we chose the 0.01 significant level in our final work.
 
 
 
-# 5 Conclusion
+# Conclusion
 
-&nbsp; &nbsp; We checked all client's works, including the summary of data and box plots, our results are consistent with hers. Then, after we did two tests to statistically analyse the main problem we want to solve, we conclude that there were no significant differences in animals’ diets from BAOX and PATT.
+We checked all client's works, including the summary of data and box plots. Our results are consistent with hers. Then, after we did two tests to statistically analyse the main problem we want to solve, we concluded that there were no significant differences in animals’ diets from BAOX and PATT.
 
 
 # Citation
@@ -814,6 +774,53 @@ setB<-data_turkey_n[which(data_turkey_n$Site=="Tlajinga"),]
 print("ap_13C_VPDB:")
 Utest(setA$value,setB$value)
 ```
+
+
+
+
+## Two-Way ANOVA Test
+```{r}
+data_dc<-aggdata[which(aggdata$variable=="d13C_VPDB"),]
+data_n<-aggdata[which(aggdata$variable=="d15N_air"),]
+data_apc<-aggdata[which(aggdata$variable=="ap_13C_VPDB"),]
+
+res.aovdc<-aov(value ~ Taxa + Site, data = data_dc)
+summary(res.aovdc)
+plot(res.aovdc, 1)
+plot(res.aovdc, 2)
+
+res.aovn<-aov(value ~ Taxa + Site, data = data_n)
+summary(res.aovn)
+plot(res.aovn, 1)
+plot(res.aovn, 2)
+
+res.aovapc<-aov(value ~ Taxa + Site, data = data_apc)
+summary(res.aovapc)
+plot(res.aovapc, 1)
+plot(res.aovapc, 2)
+```
+```{r}
+TukeyHSD(res.aovdc)
+TukeyHSD(res.aovn)
+TukeyHSD(res.aovapc)
+```
+
+
+```{r}
+library(AICcmodavg)
+
+two.way<-aov(value ~ Taxa + Site, data = data_dc)
+interaction<-aov(value ~ Taxa * Site, data = data_dc)
+
+model.set<-list(two.way, interaction)
+model.names <- c("two.way", "interaction")
+
+aictab(model.set, modnames = model.names)
+
+
+```
+
+
 
 ## Resource
 
