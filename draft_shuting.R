@@ -95,3 +95,19 @@ ggplot(d13c_stat,
   geom_errorbar(position = position_dodge(0.9), width=.2) +
   xlab("Site") + ylab("d13c yield")
 
+##check normality
+plot(fit_d15n,2)
+aov_residuals <- residuals(object = aov(fit_d15n))
+shapiro.test(x = aov_residuals )
+
+##check homogeneity
+plot(fit_d15n,1)
+library(car)
+leveneTest(value ~ Site * Taxa,data=d15n)
+
+library(ggplot2)
+dat <- data.frame(resi=resid(fit_d15n),fitt=fitted(fit_d15n),d15n)
+ggplot(dat,aes(y=resi,x=fitt,color=Site,shape=Taxa))+
+  geom_point()
+  
+
